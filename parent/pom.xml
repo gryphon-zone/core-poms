@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2019-2019 Gryphon Zone
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>zone.gryphon</groupId>
+    <artifactId>base-pom</artifactId>
+    <version>0.10-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>${project.artifactId}</name>
+    <description>Base POM for Gryphon Zone projects</description>
+
+    <url>https://github.com/gryphon-zone/core-poms</url>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>tyrol</id>
+            <name>Tyrol</name>
+            <email>tyrol@gryphon.zone</email>
+            <organizationUrl>https://github.com/gryphon-zone/</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>-6</timezone>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:gryphon-zone/core-poms.git</connection>
+        <developerConnection>scm:git:git@github.com:gryphon-zone/core-poms.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/gryphon-zone/core-poms</url>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <properties>
+        <java.majorVersion>1</java.majorVersion>
+        <java.minorVersion>8</java.minorVersion>
+        <java.version>${java.majorVersion}.${java.minorVersion}</java.version>
+
+        <!-- always use UTF-8 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- allow child projects to override settings -->
+        <pedantic.testOnlyDeps>org.junit:junit,org.assertj:assertj-core,org.mockito:mockito-all</pedantic.testOnlyDeps>
+
+        <!-- Compilation settings -->
+        <!-- https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html -->
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.release>${java.minorVersion}</maven.compiler.release>
+        <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
+        <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
+
+        <!-- plugin versions -->
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+
+        <!-- dependency analyzer settings -->
+        <dependency.fail.on.warnings>true</dependency.fail.on.warnings>
+
+        <!-- javadoc plugin settings -->
+        <javadoc-plugin.quiet>true</javadoc-plugin.quiet>
+        <javadoc-plugin.failOnError>false</javadoc-plugin.failOnError>
+
+        <!-- release plugin settings -->
+        <release-plugin.profiles>release</release-plugin.profiles>
+
+        <!-- pom sort settings -->
+        <sort-pom.skip>false</sort-pom.skip>
+        <sort-pom.profile>recommended_2008_06</sort-pom.profile>
+    </properties>
+
+    <repositories>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+            <id>ossrh</id>
+            <name>Sonatype OSS Repository Hosting</name>
+            <url>https://oss.sonatype.org/content/groups/public</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.github.ekryd.sortpom</groupId>
+                    <artifactId>sortpom-maven-plugin</artifactId>
+                    <version>2.10.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.1.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.0.0-M1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.0.0-M2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>3.0.0-M1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.1.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.1.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.2.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.7.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-report-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.6.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>1.6.8</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <!-- see https://github.com/Ekryd/sortpom/wiki/IgnoringSections -->
+                <!-- for how to exclude portions of the POM from sorting        -->
+                <groupId>com.github.ekryd.sortpom</groupId>
+                <artifactId>sortpom-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sort-pom</id>
+                        <goals>
+                            <goal>sort</goal>
+                        </goals>
+                        <configuration>
+                            <keepBlankLines>true</keepBlankLines>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                            <sortDependencies>scope,groupId,artifactId</sortDependencies>
+                            <sortProperties>false</sortProperties>
+                            <sortPlugins>scope,groupId,artifactId</sortPlugins>
+                            <sortModules>true</sortModules>
+                            <createBackupFile>true</createBackupFile>
+                            <expandEmptyElements>false</expandEmptyElements>
+                            <nrOfIndentSpace>4</nrOfIndentSpace>
+                            <skip>${sort-pom.skip}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>analyze-dependencies</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>analyze-only</goal>
+                        </goals>
+                        <configuration>
+                            <failOnWarning>${dependency.fail.on.warnings}</failOnWarning>
+                            <outputXML>true</outputXML>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-minimum-maven-version</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.1.0</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>require-upper-bound-dependencies</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireUpperBoundDeps />
+                            </rules>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- light weight validation which doesn't validate the order in which -->
+                        <!-- anything is declared, and only ensures dependencies are properly  -->
+                        <!-- managed, and declared in the correct scope. It's recommended to   -->
+                        <!-- use this execution in conjunction with the sortpom-maven-plugin.  -->
+                        <!-- If not using the sortpom-maven-plugin, it's recommended to use    -->
+                        <!-- the full-pom-validation execution instead.                        -->
+                        <id>light-pom-validation</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <!-- see the following for documentation about configuration of the enforcer -->
+                                <!-- https://github.com/ferstl/pedantic-pom-enforcers/wiki/CompoundPedanticEnforcer -->
+                                <compound implementation="com.github.ferstl.maven.pomenforcers.CompoundPedanticEnforcer">
+                                    <!-- Enforcers -->
+                                    <enforcers>DEPENDENCY_CONFIGURATION,DEPENDENCY_SCOPE,DEPENDENCY_MANAGEMENT_LOCATION,PLUGIN_CONFIGURATION,PLUGIN_MANAGEMENT_LOCATION</enforcers>
+
+                                    <!-- DEPENDENCY_CONFIGURATION configuration -->
+                                    <manageDependencyVersions>true</manageDependencyVersions>
+                                    <allowUnmangedProjectVersions>false</allowUnmangedProjectVersions>
+                                    <manageDependencyExclusions>true</manageDependencyExclusions>
+
+                                    <!-- DEPENDENCY_SCOPE configuration -->
+                                    <compileDependencies />
+                                    <providedDependencies>org.projectlombok:lombok</providedDependencies>
+                                    <runtimeDependencies />
+                                    <systemDependencies />
+                                    <testDependencies>${pedantic.testOnlyDeps}</testDependencies>
+                                    <importDependencies />
+
+                                    <!-- DEPENDENCY_MANAGEMENT_LOCATION configuration -->
+                                    <allowParentPomsForDependencyManagement>true</allowParentPomsForDependencyManagement>
+                                    <dependencyManagingPoms />
+
+                                    <!-- PLUGIN_CONFIGURATION configuration -->
+                                    <managePluginVersions>false</managePluginVersions>
+                                    <managePluginConfigurations>false</managePluginConfigurations>
+                                    <managePluginDependencies>false</managePluginDependencies>
+
+                                    <!-- PLUGIN_MANAGEMENT_LOCATION configuration -->
+                                    <allowParentPomsForPluginManagement>true</allowParentPomsForPluginManagement>
+                                    <pluginManagingPoms />
+                                </compound>
+                            </rules>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>full-pom-validation</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <!-- see the following for documentation about configuration of the enforcer -->
+                                <!-- https://github.com/ferstl/pedantic-pom-enforcers/wiki/CompoundPedanticEnforcer -->
+                                <compound implementation="com.github.ferstl.maven.pomenforcers.CompoundPedanticEnforcer">
+                                    <!-- Enforcers -->
+                                    <enforcers>POM_SECTION_ORDER,MODULE_ORDER,DEPENDENCY_MANAGEMENT_ORDER,DEPENDENCY_ORDER,DEPENDENCY_CONFIGURATION,DEPENDENCY_SCOPE</enforcers>
+                                    <!-- POM_SECTION_ORDER configuration -->
+                                    <pomSectionPriorities>modelVersion,parent,groupId,artifactId,version,packaging</pomSectionPriorities>
+
+                                    <!-- DEPENDENCY_ORDER configuration -->
+                                    <dependenciesOrderBy>scope,groupId,artifactId</dependenciesOrderBy>
+                                    <dependenciesScopePriorities>import,compile,provided,runtime,test</dependenciesScopePriorities>
+                                    <dependenciesGroupIdPriorities>${project.groupId}</dependenciesGroupIdPriorities>
+                                    <!-- DEPENDENCY_MANAGEMENT_ORDER configuration -->
+                                    <dependencyManagementOrderBy>scope,groupId,artifactId</dependencyManagementOrderBy>
+                                    <dependencyManagementScopePriorities>import,compile,provided,runtime,test</dependencyManagementScopePriorities>
+                                    <dependencyManagementGroupIdPriorities>${project.groupId}</dependencyManagementGroupIdPriorities>
+                                    <!-- DEPENDENCY_CONFIGURATION configuration -->
+                                    <manageDependencyVersions>true</manageDependencyVersions>
+                                    <allowUnmangedProjectVersions>false</allowUnmangedProjectVersions>
+                                    <manageDependencyExclusions>true</manageDependencyExclusions>
+                                    <!-- DEPENDENCY_SCOPE configuration -->
+                                    <compileDependencies />
+                                    <providedDependencies>org.projectlombok:lombok</providedDependencies>
+                                    <runtimeDependencies />
+                                    <systemDependencies />
+                                    <testDependencies>${pedantic.testOnlyDeps}</testDependencies>
+                                    <importDependencies />
+                                    <!-- DEPENDENCY_MANAGEMENT_LOCATION configuration -->
+                                    <allowParentPomsForDependencyManagement>true</allowParentPomsForDependencyManagement>
+                                    <dependencyManagingPoms />
+                                    <!-- PLUGIN_MANAGEMENT_ORDER configuration -->
+                                    <pluginManagementOrderBy>groupId,artifactId</pluginManagementOrderBy>
+                                    <pluginManagementGroupIdPriorities>${project.groupId}</pluginManagementGroupIdPriorities>
+                                    <pluginManagementArtifactIdPriorities />
+                                    <!-- PLUGIN_CONFIGURATION configuration -->
+                                    <managePluginVersions>false</managePluginVersions>
+                                    <managePluginConfigurations>false</managePluginConfigurations>
+                                    <managePluginDependencies>false</managePluginDependencies>
+                                    <!-- PLUGIN_MANAGEMENT_LOCATION configuration -->
+                                    <allowParentPomsForPluginManagement>true</allowParentPomsForPluginManagement>
+                                    <pluginManagingPoms />
+                                </compound>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.github.ferstl</groupId>
+                        <artifactId>pedantic-pom-enforcers</artifactId>
+                        <version>1.3.2</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadoc</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <quiet>${javadoc-plugin.quiet}</quiet>
+                            <failOnError>${javadoc-plugin.failOnError}</failOnError>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>${release-plugin.profiles}</releaseProfiles>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>display-plugin-updates</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>versions-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>display-plugin-updates</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>display-plugin-updates</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
