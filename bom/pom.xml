@@ -27,37 +27,7 @@
     <artifactId>base-bom</artifactId>
     <packaging>pom</packaging>
 
-    <name>${project.artifactId}</name>
-    <description>Base POM file for managing dependencies in Gryphon Zone projects</description>
-
-    <url>https://github.com/gryphon-zone/base-bom</url>
-
-    <licenses>
-        <license>
-            <name>The Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <id>tyrol</id>
-            <name>Tyrol</name>
-            <email>tyrol@gryphon.zone</email>
-            <organizationUrl>https://github.com/gryphon-zone/</organizationUrl>
-            <roles>
-                <role>developer</role>
-            </roles>
-            <timezone>-6</timezone>
-        </developer>
-    </developers>
-
-    <scm>
-        <connection>scm:git:git@github.com:gryphon-zone/base-bom.git</connection>
-        <developerConnection>scm:git:git@github.com:gryphon-zone/base-bom.git</developerConnection>
-        <tag>HEAD</tag>
-        <url>https://github.com/gryphon-zone/base-bom/tree/master</url>
-    </scm>
+    <description>Base POM for managing dependencies in Gryphon Zone projects</description>
 
     <properties>
         <logback.version>1.2.3</logback.version>

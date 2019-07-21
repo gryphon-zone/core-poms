@@ -22,7 +22,6 @@
     <version>0.10-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>${project.artifactId}</name>
     <description>Base POM for Gryphon Zone projects</description>
 
     <url>https://github.com/gryphon-zone/core-poms</url>
