@@ -65,12 +65,11 @@
         <java.minorVersion>8</java.minorVersion>
         <java.version>${java.majorVersion}.${java.minorVersion}</java.version>
 
+        <maven.minimumVersion>3.1.0</maven.minimumVersion>
+
         <!-- always use UTF-8 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <!-- allow child projects to override settings -->
-        <pedantic.testOnlyDeps>org.junit:junit,org.assertj:assertj-core,org.mockito:mockito-all</pedantic.testOnlyDeps>
 
         <!-- Compilation settings -->
         <!-- https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html -->
@@ -80,22 +79,74 @@
         <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 
-        <!-- plugin versions -->
-        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-
         <!-- dependency analyzer settings -->
         <dependency.fail.on.warnings>true</dependency.fail.on.warnings>
 
         <!-- javadoc plugin settings -->
-        <javadoc-plugin.quiet>true</javadoc-plugin.quiet>
-        <javadoc-plugin.failOnError>false</javadoc-plugin.failOnError>
+        <javadoc.quiet>true</javadoc.quiet>
+        <javadoc.failOnError>false</javadoc.failOnError>
 
         <!-- release plugin settings -->
-        <release-plugin.profiles>release</release-plugin.profiles>
+        <release.profiles>release</release.profiles>
 
         <!-- pom sort settings -->
-        <sort-pom.skip>false</sort-pom.skip>
+        <sortpom.skip>false</sortpom.skip>
         <sort-pom.profile>recommended_2008_06</sort-pom.profile>
+
+        <!-- pedantic POM settings -->
+        <pedantic-pom-enforcers.version>1.3.2</pedantic-pom-enforcers.version>
+
+        <!-- define hardcoded values in "default" settings so that sub-poms can easily add to the list without starting from scratch  -->
+        <!-- e.g. child POMs can do:                                                                                                  -->
+        <!-- <pedantic.testScopedDependencies>${pedantic.defaultTestScopedDependencies},com.foo:bar</pedantic.testScopedDependencies> -->
+        <!-- to add to the list without needing to re-declare all of the defaults. It also allows them to access the default values,  -->
+        <!-- even if they've overridden what the dependency plugin is using.                                                          -->
+
+        <!-- compile scoped -->
+        <pedantic.defaultCompileScopedDependencies />
+        <pedantic.compileScopedDependencies>${pedantic.defaultCompileScopedDependencies}</pedantic.compileScopedDependencies>
+
+        <!-- test scoped -->
+        <pedantic.defaultTestScopedDependencies>org.junit:junit,org.assertj:assertj-core,org.mockito:mockito-all</pedantic.defaultTestScopedDependencies>
+        <pedantic.testScopedDependencies>${pedantic.defaultTestScopedDependencies}</pedantic.testScopedDependencies>
+
+        <!-- runtime scoped -->
+        <pedantic.defaultRuntimeScopedDependencies />
+        <pedantic.runtimeScopedDependencies>${pedantic.defaultRuntimeScopedDependencies}</pedantic.runtimeScopedDependencies>
+
+        <!-- provided scoped -->
+        <pedantic.defaultProvidedScopedDependencies>org.projectlombok:lombok</pedantic.defaultProvidedScopedDependencies>
+        <pedantic.providedScopedDependencies>${pedantic.defaultProvidedScopedDependencies}</pedantic.providedScopedDependencies>
+
+        <!-- system scoped -->
+        <pedantic.defaultSystemScopedDependencies />
+        <pedantic.systemScopedDependencies>${pedantic.defaultSystemScopedDependencies}</pedantic.systemScopedDependencies>
+
+        <!-- import scoped -->
+        <pedantic.defaultImportScopedDependencies>zone.gryphon:base-bom</pedantic.defaultImportScopedDependencies>
+        <pedantic.importScopedDependencies>${pedantic.defaultImportScopedDependencies}</pedantic.importScopedDependencies>
+
+        <!-- plugin versions -->
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <sortpom-maven-plugin.version>2.10.0</sortpom-maven-plugin.version>
+        <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
+        <maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
+        <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <maven-install-plugin.version>3.0.0-M1</maven-install-plugin.version>
+        <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+        <maven-shade-plugin.version>3.2.1</maven-shade-plugin.version>
+        <maven-site-plugin.version>3.7.1</maven-site-plugin.version>
+        <maven-source-plugin.version>3.1.0</maven-source-plugin.version>
+        <build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
+        <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
+        <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
     </properties>
 
     <repositories>
@@ -135,32 +186,32 @@
                 <plugin>
                     <groupId>com.github.ekryd.sortpom</groupId>
                     <artifactId>sortpom-maven-plugin</artifactId>
-                    <version>2.10.0</version>
+                    <version>${sortpom-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>${maven-clean-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
+                    <version>${maven-compiler-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>${maven-dependency-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.0.0-M1</version>
+                    <version>${maven-deploy-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0-M2</version>
+                    <version>${maven-enforcer-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -170,47 +221,47 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
+                    <version>${maven-gpg-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
-                    <version>3.0.0-M1</version>
+                    <version>${maven-install-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>${maven-jar-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>${maven-javadoc-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>${maven-release-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>${maven-resources-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.2.1</version>
+                    <version>${maven-shade-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.7.1</version>
+                    <version>${maven-site-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>${maven-source-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -225,53 +276,27 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>${build-helper-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.6.0</version>
+                    <version>${exec-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>${versions-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.8</version>
+                    <version>${nexus-staging-maven-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
-            <plugin>
-                <!-- see https://github.com/Ekryd/sortpom/wiki/IgnoringSections -->
-                <!-- for how to exclude portions of the POM from sorting        -->
-                <groupId>com.github.ekryd.sortpom</groupId>
-                <artifactId>sortpom-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>sort-pom</id>
-                        <goals>
-                            <goal>sort</goal>
-                        </goals>
-                        <configuration>
-                            <keepBlankLines>true</keepBlankLines>
-                            <encoding>${project.build.sourceEncoding}</encoding>
-                            <sortDependencies>scope,groupId,artifactId</sortDependencies>
-                            <sortProperties>false</sortProperties>
-                            <sortPlugins>scope,groupId,artifactId</sortPlugins>
-                            <sortModules>true</sortModules>
-                            <createBackupFile>true</createBackupFile>
-                            <expandEmptyElements>false</expandEmptyElements>
-                            <nrOfIndentSpace>4</nrOfIndentSpace>
-                            <skip>${sort-pom.skip}</skip>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -301,13 +326,13 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>3.1.0</version>
+                                    <version>${maven.minimumVersion}</version>
                                 </requireMavenVersion>
                             </rules>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>require-upper-bound-dependencies</id>
+                        <id>require-dependency-upper-bounds</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>enforce</goal>
@@ -319,13 +344,9 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <!-- light weight validation which doesn't validate the order in which -->
-                        <!-- anything is declared, and only ensures dependencies are properly  -->
-                        <!-- managed, and declared in the correct scope. It's recommended to   -->
-                        <!-- use this execution in conjunction with the sortpom-maven-plugin.  -->
-                        <!-- If not using the sortpom-maven-plugin, it's recommended to use    -->
-                        <!-- the full-pom-validation execution instead.                        -->
-                        <id>light-pom-validation</id>
+                        <!-- validate dependencies are declared in the correct scope, -->
+                        <!-- and that versions are declared in the correct locations. -->
+                        <id>pom-validation</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>enforce</goal>
@@ -344,75 +365,22 @@
                                     <manageDependencyExclusions>true</manageDependencyExclusions>
 
                                     <!-- DEPENDENCY_SCOPE configuration -->
-                                    <compileDependencies />
-                                    <providedDependencies>org.projectlombok:lombok</providedDependencies>
-                                    <runtimeDependencies />
-                                    <systemDependencies />
-                                    <testDependencies>${pedantic.testOnlyDeps}</testDependencies>
-                                    <importDependencies />
+                                    <compileDependencies>${pedantic.compileScopedDependencies}</compileDependencies>
+                                    <providedDependencies>${pedantic.providedScopedDependencies}</providedDependencies>
+                                    <runtimeDependencies>${pedantic.runtimeScopedDependencies}</runtimeDependencies>
+                                    <systemDependencies>${pedantic.systemScopedDependencies}</systemDependencies>
+                                    <testDependencies>${pedantic.testScopedDependencies}</testDependencies>
+                                    <importDependencies>${pedantic.importScopedDependencies}</importDependencies>
 
                                     <!-- DEPENDENCY_MANAGEMENT_LOCATION configuration -->
                                     <allowParentPomsForDependencyManagement>true</allowParentPomsForDependencyManagement>
                                     <dependencyManagingPoms />
 
                                     <!-- PLUGIN_CONFIGURATION configuration -->
-                                    <managePluginVersions>false</managePluginVersions>
+                                    <managePluginVersions>true</managePluginVersions>
                                     <managePluginConfigurations>false</managePluginConfigurations>
                                     <managePluginDependencies>false</managePluginDependencies>
 
-                                    <!-- PLUGIN_MANAGEMENT_LOCATION configuration -->
-                                    <allowParentPomsForPluginManagement>true</allowParentPomsForPluginManagement>
-                                    <pluginManagingPoms />
-                                </compound>
-                            </rules>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>full-pom-validation</id>
-                        <phase>none</phase>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <!-- see the following for documentation about configuration of the enforcer -->
-                                <!-- https://github.com/ferstl/pedantic-pom-enforcers/wiki/CompoundPedanticEnforcer -->
-                                <compound implementation="com.github.ferstl.maven.pomenforcers.CompoundPedanticEnforcer">
-                                    <!-- Enforcers -->
-                                    <enforcers>POM_SECTION_ORDER,MODULE_ORDER,DEPENDENCY_MANAGEMENT_ORDER,DEPENDENCY_ORDER,DEPENDENCY_CONFIGURATION,DEPENDENCY_SCOPE</enforcers>
-                                    <!-- POM_SECTION_ORDER configuration -->
-                                    <pomSectionPriorities>modelVersion,parent,groupId,artifactId,version,packaging</pomSectionPriorities>
-
-                                    <!-- DEPENDENCY_ORDER configuration -->
-                                    <dependenciesOrderBy>scope,groupId,artifactId</dependenciesOrderBy>
-                                    <dependenciesScopePriorities>import,compile,provided,runtime,test</dependenciesScopePriorities>
-                                    <dependenciesGroupIdPriorities>${project.groupId}</dependenciesGroupIdPriorities>
-                                    <!-- DEPENDENCY_MANAGEMENT_ORDER configuration -->
-                                    <dependencyManagementOrderBy>scope,groupId,artifactId</dependencyManagementOrderBy>
-                                    <dependencyManagementScopePriorities>import,compile,provided,runtime,test</dependencyManagementScopePriorities>
-                                    <dependencyManagementGroupIdPriorities>${project.groupId}</dependencyManagementGroupIdPriorities>
-                                    <!-- DEPENDENCY_CONFIGURATION configuration -->
-                                    <manageDependencyVersions>true</manageDependencyVersions>
-                                    <allowUnmangedProjectVersions>false</allowUnmangedProjectVersions>
-                                    <manageDependencyExclusions>true</manageDependencyExclusions>
-                                    <!-- DEPENDENCY_SCOPE configuration -->
-                                    <compileDependencies />
-                                    <providedDependencies>org.projectlombok:lombok</providedDependencies>
-                                    <runtimeDependencies />
-                                    <systemDependencies />
-                                    <testDependencies>${pedantic.testOnlyDeps}</testDependencies>
-                                    <importDependencies />
-                                    <!-- DEPENDENCY_MANAGEMENT_LOCATION configuration -->
-                                    <allowParentPomsForDependencyManagement>true</allowParentPomsForDependencyManagement>
-                                    <dependencyManagingPoms />
-                                    <!-- PLUGIN_MANAGEMENT_ORDER configuration -->
-                                    <pluginManagementOrderBy>groupId,artifactId</pluginManagementOrderBy>
-                                    <pluginManagementGroupIdPriorities>${project.groupId}</pluginManagementGroupIdPriorities>
-                                    <pluginManagementArtifactIdPriorities />
-                                    <!-- PLUGIN_CONFIGURATION configuration -->
-                                    <managePluginVersions>false</managePluginVersions>
-                                    <managePluginConfigurations>false</managePluginConfigurations>
-                                    <managePluginDependencies>false</managePluginDependencies>
                                     <!-- PLUGIN_MANAGEMENT_LOCATION configuration -->
                                     <allowParentPomsForPluginManagement>true</allowParentPomsForPluginManagement>
                                     <pluginManagingPoms />
@@ -425,7 +393,7 @@
                     <dependency>
                         <groupId>com.github.ferstl</groupId>
                         <artifactId>pedantic-pom-enforcers</artifactId>
-                        <version>1.3.2</version>
+                        <version>${pedantic-pom-enforcers.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -440,8 +408,8 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <quiet>${javadoc-plugin.quiet}</quiet>
-                            <failOnError>${javadoc-plugin.failOnError}</failOnError>
+                            <quiet>${javadoc.quiet}</quiet>
+                            <failOnError>${javadoc.failOnError}</failOnError>
                         </configuration>
                     </execution>
                 </executions>
@@ -452,7 +420,7 @@
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <useReleaseProfile>false</useReleaseProfile>
-                    <releaseProfiles>${release-plugin.profiles}</releaseProfiles>
+                    <releaseProfiles>${release.profiles}</releaseProfiles>
                 </configuration>
             </plugin>
             <plugin>
@@ -470,6 +438,42 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>sortpom</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- see https://github.com/Ekryd/sortpom/wiki/IgnoringSections -->
+                        <!-- for how to exclude portions of the POM from sorting        -->
+                        <groupId>com.github.ekryd.sortpom</groupId>
+                        <artifactId>sortpom-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sort-pom</id>
+                                <goals>
+                                    <goal>sort</goal>
+                                </goals>
+                                <configuration>
+                                    <keepBlankLines>true</keepBlankLines>
+                                    <encoding>${project.build.sourceEncoding}</encoding>
+                                    <sortDependencies>scope,groupId,artifactId</sortDependencies>
+                                    <sortPlugins>scope,groupId,artifactId</sortPlugins>
+                                    <sortModules>true</sortModules>
+                                    <sortProperties>false</sortProperties>
+                                    <createBackupFile>true</createBackupFile>
+                                    <expandEmptyElements>false</expandEmptyElements>
+                                    <nrOfIndentSpace>4</nrOfIndentSpace>
+                                    <skip>${sortpom.skip}</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>release</id>
             <build>
