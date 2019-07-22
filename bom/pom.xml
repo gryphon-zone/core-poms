@@ -27,6 +27,7 @@
     <artifactId>base-bom</artifactId>
     <packaging>pom</packaging>
 
+    <name>${project.artifactId}</name>
     <description>Base POM for managing dependencies in Gryphon Zone projects</description>
 
     <properties>
