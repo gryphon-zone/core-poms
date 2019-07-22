@@ -122,33 +122,4 @@
 
         </dependencies>
     </dependencyManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>update-bom-versions</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>update-properties</goal>
-                        </goals>
-                        <configuration>
-                            <allowMajorUpdates>false</allowMajorUpdates>
-                            <allowSnapshots>false</allowSnapshots>
-                            <processDependencies>false</processDependencies>
-
-                            <!-- all of the other dependencies publish "beta" builds of their -->
-                            <!-- new releases first, which causes maven to try and upgrade to -->
-                            <!-- unstable releases if we let it manage the versions.          -->
-                            <includeProperties>assertj.version,lombok.version</includeProperties>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

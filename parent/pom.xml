@@ -507,7 +507,10 @@
             </build>
         </profile>
         <profile>
-            <id>display-plugin-updates</id>
+            <id>display-updates</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -520,6 +523,24 @@
                                 <goals>
                                     <goal>display-plugin-updates</goal>
                                 </goals>
+                                <configuration>
+                                    <allowSnapshots>false</allowSnapshots>
+                                    <generateBackupPoms>false</generateBackupPoms>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>display-dependency-updates</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>display-dependency-updates</goal>
+                                </goals>
+                                <configuration>
+                                    <allowAnyUpdates>false</allowAnyUpdates>
+                                    <allowMajorUpdates>false</allowMajorUpdates>
+                                    <allowMinorUpdates>true</allowMinorUpdates>
+                                    <allowSnapshots>false</allowSnapshots>
+                                    <generateBackupPoms>false</generateBackupPoms>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
@@ -527,5 +548,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>
