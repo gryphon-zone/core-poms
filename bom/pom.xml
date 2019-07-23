@@ -31,6 +31,8 @@
     <description>Base POM for managing dependencies in Gryphon Zone projects</description>
 
     <properties>
+        <displayUpdates.processDependencyManagement>true</displayUpdates.processDependencyManagement>
+
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.26</slf4j.version>
         <mockito.version>1.10.19</mockito.version>

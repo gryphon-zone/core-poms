@@ -94,6 +94,12 @@
         <sortpom.skip>false</sortpom.skip>
         <sort-pom.profile>recommended_2008_06</sort-pom.profile>
 
+        <!-- display dependency update settings -->
+        <displayUpdates.processPluginDependenciesInPluginManagement>true</displayUpdates.processPluginDependenciesInPluginManagement>
+        <displayUpdates.processDependencyManagement>false</displayUpdates.processDependencyManagement>
+        <displayUpdates.processPluginDependencies>true</displayUpdates.processPluginDependencies>
+        <displayUpdates.processDependencies>true</displayUpdates.processDependencies>
+
         <!-- pedantic POM settings -->
         <pedantic-pom-enforcers.version>1.3.2</pedantic-pom-enforcers.version>
 
@@ -541,6 +547,10 @@
                                     <allowMinorUpdates>true</allowMinorUpdates>
                                     <allowSnapshots>false</allowSnapshots>
                                     <generateBackupPoms>false</generateBackupPoms>
+                                    <processDependencies>${displayUpdates.processDependencies}</processDependencies>
+                                    <processDependencyManagement>${displayUpdates.processDependencyManagement}</processDependencyManagement>
+                                    <processPluginDependencies>${displayUpdates.processPluginDependencies}</processPluginDependencies>
+                                    <processPluginDependenciesInPluginManagement>${displayUpdates.processPluginDependenciesInPluginManagement}</processPluginDependenciesInPluginManagement>
                                 </configuration>
                             </execution>
                         </executions>
