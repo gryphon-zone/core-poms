@@ -158,6 +158,20 @@
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!-- "fake" entry to cause the maven-release-plugin to realize that -->
+                <!-- ${core-poms.version} refers to the project version, and should -->
+                <!-- be updated during a Maven release.                             -->
+                <groupId>zone.gryphon</groupId>
+                <artifactId>base-pom</artifactId>
+                <version>${core-poms.version}</version>
+                <classifier>pom</classifier>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <repositories>
         <repository>
             <releases>
