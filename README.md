@@ -63,8 +63,10 @@ This can be done with the following:
 </dependencyManagement>
 ```
 
-If `base-bom` is included in the same POM which declares `base-pom` as its parent, you can use the expression
-`project.parent.version` to lock its version to the parent POM version, like so:
+If `base-bom` is included in a project which inherits from `base-pom` (e.g. uses it as its parent),
+the variable `core-poms.version` can be used to manage the version of `base-bom` automatically.
+
+e.g.
 ```xml
 <project>
     <!-- ...snip... -->
@@ -83,7 +85,7 @@ If `base-bom` is included in the same POM which declares `base-pom` as its paren
             <dependency>
                 <groupId>zone.gryphon</groupId>
                 <artifactId>base-bom</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${core-poms.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -95,6 +97,3 @@ If `base-bom` is included in the same POM which declares `base-pom` as its paren
     
 </project>
 ```
-
-Otherwise, Maven sadly does not provide an easy way to version-lock the two dependencies.
- 
