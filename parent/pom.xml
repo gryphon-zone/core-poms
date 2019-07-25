@@ -465,9 +465,6 @@
     <profiles>
         <profile>
             <id>release</id>
-            <properties>
-                <maven.release>true</maven.release>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -497,6 +494,9 @@
                     </plugin>
                 </plugins>
             </build>
+            <properties>
+                <maven.release>true</maven.release>
+            </properties>
         </profile>
         <profile>
             <id>sortpom</id>
