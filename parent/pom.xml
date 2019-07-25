@@ -496,6 +496,7 @@
             </build>
             <properties>
                 <maven.release>true</maven.release>
+                <sortpom.skip>true</sortpom.skip>
             </properties>
         </profile>
         <profile>
