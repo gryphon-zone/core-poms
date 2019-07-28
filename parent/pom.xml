@@ -495,19 +495,13 @@
                 </plugins>
             </build>
             <properties>
-                <maven.release>true</maven.release>
                 <sortpom.skip>true</sortpom.skip>
             </properties>
         </profile>
         <profile>
             <id>sortpom</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
-                <property>
-                    <!-- active when ${maven.release} is not "true" -->
-                    <name>maven.release</name>
-                    <value>!true</value>
-                </property>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <build>
                 <plugins>
