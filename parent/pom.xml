@@ -209,9 +209,31 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <!-- see https://github.com/Ekryd/sortpom/wiki/IgnoringSections -->
+                    <!-- for how to exclude portions of the POM from sorting        -->
                     <groupId>com.github.ekryd.sortpom</groupId>
                     <artifactId>sortpom-maven-plugin</artifactId>
                     <version>${maven-sortpom-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>sort-pom</id>
+                            <goals>
+                                <goal>sort</goal>
+                            </goals>
+                            <configuration>
+                                <keepBlankLines>true</keepBlankLines>
+                                <encoding>${project.build.sourceEncoding}</encoding>
+                                <sortDependencies>scope,groupId,artifactId</sortDependencies>
+                                <sortPlugins>scope,groupId,artifactId</sortPlugins>
+                                <sortModules>true</sortModules>
+                                <sortProperties>false</sortProperties>
+                                <createBackupFile>true</createBackupFile>
+                                <expandEmptyElements>false</expandEmptyElements>
+                                <nrOfIndentSpace>4</nrOfIndentSpace>
+                                <skip>${sortpom.skip}</skip>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -322,6 +344,15 @@
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>com.github.ekryd.sortpom</groupId>
+                <artifactId>sortpom-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sort-pom</id>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -497,42 +528,6 @@
             <properties>
                 <sortpom.skip>true</sortpom.skip>
             </properties>
-        </profile>
-        <profile>
-            <id>sortpom</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <!-- see https://github.com/Ekryd/sortpom/wiki/IgnoringSections -->
-                        <!-- for how to exclude portions of the POM from sorting        -->
-                        <groupId>com.github.ekryd.sortpom</groupId>
-                        <artifactId>sortpom-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sort-pom</id>
-                                <goals>
-                                    <goal>sort</goal>
-                                </goals>
-                                <configuration>
-                                    <keepBlankLines>true</keepBlankLines>
-                                    <encoding>${project.build.sourceEncoding}</encoding>
-                                    <sortDependencies>scope,groupId,artifactId</sortDependencies>
-                                    <sortPlugins>scope,groupId,artifactId</sortPlugins>
-                                    <sortModules>true</sortModules>
-                                    <sortProperties>false</sortProperties>
-                                    <createBackupFile>true</createBackupFile>
-                                    <expandEmptyElements>false</expandEmptyElements>
-                                    <nrOfIndentSpace>4</nrOfIndentSpace>
-                                    <skip>${sortpom.skip}</skip>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>display-updates</id>
