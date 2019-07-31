@@ -33,7 +33,7 @@
     <properties>
         <displayUpdates.processDependencyManagement>true</displayUpdates.processDependencyManagement>
 
-        <assertj.version>3.12.2</assertj.version>
+        <assertj.version>3.13.1</assertj.version>
         <junit.version>4.12</junit.version>
         <logback.version>1.2.3</logback.version>
         <lombok.version>1.18.8</lombok.version>
