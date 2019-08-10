@@ -681,7 +681,7 @@
                             <dependency>
                                 <groupId>zone.gryphon.maven</groupId>
                                 <artifactId>maven-version-comparison-rules</artifactId>
-                                <version>1.0.7-baf3752</version>
+                                <version>1.0.8-23c82c2</version>
                                 <scope>compile</scope>
                             </dependency>
                         </dependencies>
