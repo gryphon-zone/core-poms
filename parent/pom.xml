@@ -229,9 +229,7 @@
                 <checksumPolicy>fail</checksumPolicy>
             </releases>
             <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
+                <enabled>false</enabled>
             </snapshots>
             <id>ossrh</id>
             <name>Sonatype OSS Repository Hosting</name>
@@ -284,6 +282,19 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>${maven-plugin.dependency.version}</version>
+                    <executions>
+                        <execution>
+                            <id>analyze-dependencies</id>
+                            <phase>process-test-classes</phase>
+                            <goals>
+                                <goal>analyze-only</goal>
+                            </goals>
+                            <configuration>
+                                <failOnWarning>${dependency.fail.on.warnings}</failOnWarning>
+                                <outputXML>true</outputXML>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -294,6 +305,85 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${maven-plugin.enforcer.version}</version>
+                    <executions>
+                        <execution>
+                            <id>enforce-minimum-maven-version</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <requireMavenVersion>
+                                        <version>${maven.minimumVersion}</version>
+                                    </requireMavenVersion>
+                                </rules>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>require-dependency-upper-bounds</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <requireUpperBoundDeps />
+                                </rules>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <!-- validate dependencies are declared in the correct scope, -->
+                            <!-- and that versions are declared in the correct locations. -->
+                            <id>pom-validation</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <!-- see the following for documentation about configuration of the enforcer -->
+                                    <!-- https://github.com/ferstl/pedantic-pom-enforcers/wiki/CompoundPedanticEnforcer -->
+                                    <compound implementation="com.github.ferstl.maven.pomenforcers.CompoundPedanticEnforcer">
+                                        <!-- Enforcers -->
+                                        <enforcers>DEPENDENCY_CONFIGURATION,DEPENDENCY_SCOPE,DEPENDENCY_MANAGEMENT_LOCATION,PLUGIN_CONFIGURATION,PLUGIN_MANAGEMENT_LOCATION</enforcers>
+
+                                        <!-- DEPENDENCY_CONFIGURATION configuration -->
+                                        <manageDependencyVersions>true</manageDependencyVersions>
+                                        <allowUnmangedProjectVersions>false</allowUnmangedProjectVersions>
+                                        <manageDependencyExclusions>true</manageDependencyExclusions>
+
+                                        <!-- DEPENDENCY_SCOPE configuration -->
+                                        <compileDependencies>${pedantic.compileScopedDependencies}</compileDependencies>
+                                        <providedDependencies>${pedantic.providedScopedDependencies}</providedDependencies>
+                                        <runtimeDependencies>${pedantic.runtimeScopedDependencies}</runtimeDependencies>
+                                        <systemDependencies>${pedantic.systemScopedDependencies}</systemDependencies>
+                                        <testDependencies>${pedantic.testScopedDependencies}</testDependencies>
+                                        <importDependencies>${pedantic.importScopedDependencies}</importDependencies>
+
+                                        <!-- DEPENDENCY_MANAGEMENT_LOCATION configuration -->
+                                        <allowParentPomsForDependencyManagement>true</allowParentPomsForDependencyManagement>
+                                        <dependencyManagingPoms />
+
+                                        <!-- PLUGIN_CONFIGURATION configuration -->
+                                        <managePluginVersions>true</managePluginVersions>
+                                        <managePluginConfigurations>false</managePluginConfigurations>
+                                        <managePluginDependencies>false</managePluginDependencies>
+
+                                        <!-- PLUGIN_MANAGEMENT_LOCATION configuration -->
+                                        <allowParentPomsForPluginManagement>true</allowParentPomsForPluginManagement>
+                                        <pluginManagingPoms />
+                                    </compound>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.github.ferstl</groupId>
+                            <artifactId>pedantic-pom-enforcers</artifactId>
+                            <version>${pedantic-pom-enforcers.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -304,6 +394,15 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>${maven-plugin.gpg.version}</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -319,11 +418,29 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven-plugin.javadoc.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-javadoc</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <configuration>
+                                <quiet>${javadoc.quiet}</quiet>
+                                <failOnError>${javadoc.failOnError}</failOnError>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>${maven-plugin.release.version}</version>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <useReleaseProfile>false</useReleaseProfile>
+                        <releaseProfiles>${release.profiles}</releaseProfiles>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -344,6 +461,20 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>${maven-plugin.source.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-compile-sources</id>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>attach-test-sources</id>
+                            <goals>
+                                <goal>test-jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -374,6 +505,12 @@
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
                     <version>${maven-plugin.nexus-staging.version}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <serverId>ossrh</serverId>
+                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -394,14 +531,6 @@
                 <executions>
                     <execution>
                         <id>analyze-dependencies</id>
-                        <phase>process-test-classes</phase>
-                        <goals>
-                            <goal>analyze-only</goal>
-                        </goals>
-                        <configuration>
-                            <failOnWarning>${dependency.fail.on.warnings}</failOnWarning>
-                            <outputXML>true</outputXML>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -411,82 +540,14 @@
                 <executions>
                     <execution>
                         <id>enforce-minimum-maven-version</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireMavenVersion>
-                                    <version>${maven.minimumVersion}</version>
-                                </requireMavenVersion>
-                            </rules>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>require-dependency-upper-bounds</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireUpperBoundDeps />
-                            </rules>
-                        </configuration>
                     </execution>
                     <execution>
-                        <!-- validate dependencies are declared in the correct scope, -->
-                        <!-- and that versions are declared in the correct locations. -->
                         <id>pom-validation</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <!-- see the following for documentation about configuration of the enforcer -->
-                                <!-- https://github.com/ferstl/pedantic-pom-enforcers/wiki/CompoundPedanticEnforcer -->
-                                <compound implementation="com.github.ferstl.maven.pomenforcers.CompoundPedanticEnforcer">
-                                    <!-- Enforcers -->
-                                    <enforcers>DEPENDENCY_CONFIGURATION,DEPENDENCY_SCOPE,DEPENDENCY_MANAGEMENT_LOCATION,PLUGIN_CONFIGURATION,PLUGIN_MANAGEMENT_LOCATION</enforcers>
-
-                                    <!-- DEPENDENCY_CONFIGURATION configuration -->
-                                    <manageDependencyVersions>true</manageDependencyVersions>
-                                    <allowUnmangedProjectVersions>false</allowUnmangedProjectVersions>
-                                    <manageDependencyExclusions>true</manageDependencyExclusions>
-
-                                    <!-- DEPENDENCY_SCOPE configuration -->
-                                    <compileDependencies>${pedantic.compileScopedDependencies}</compileDependencies>
-                                    <providedDependencies>${pedantic.providedScopedDependencies}</providedDependencies>
-                                    <runtimeDependencies>${pedantic.runtimeScopedDependencies}</runtimeDependencies>
-                                    <systemDependencies>${pedantic.systemScopedDependencies}</systemDependencies>
-                                    <testDependencies>${pedantic.testScopedDependencies}</testDependencies>
-                                    <importDependencies>${pedantic.importScopedDependencies}</importDependencies>
-
-                                    <!-- DEPENDENCY_MANAGEMENT_LOCATION configuration -->
-                                    <allowParentPomsForDependencyManagement>true</allowParentPomsForDependencyManagement>
-                                    <dependencyManagingPoms />
-
-                                    <!-- PLUGIN_CONFIGURATION configuration -->
-                                    <managePluginVersions>true</managePluginVersions>
-                                    <managePluginConfigurations>false</managePluginConfigurations>
-                                    <managePluginDependencies>false</managePluginDependencies>
-
-                                    <!-- PLUGIN_MANAGEMENT_LOCATION configuration -->
-                                    <allowParentPomsForPluginManagement>true</allowParentPomsForPluginManagement>
-                                    <pluginManagingPoms />
-                                </compound>
-                            </rules>
-                        </configuration>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.github.ferstl</groupId>
-                        <artifactId>pedantic-pom-enforcers</artifactId>
-                        <version>${pedantic-pom-enforcers.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -494,38 +555,23 @@
                 <executions>
                     <execution>
                         <id>attach-javadoc</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <quiet>${javadoc.quiet}</quiet>
-                            <failOnError>${javadoc.failOnError}</failOnError>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <configuration>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <useReleaseProfile>false</useReleaseProfile>
-                    <releaseProfiles>${release.profiles}</releaseProfiles>
-                </configuration>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
             </plugin>
         </plugins>
-
     </build>
 
     <profiles>
@@ -538,23 +584,8 @@
                         <artifactId>maven-gpg-plugin</artifactId>
                         <executions>
                             <execution>
+                                <!-- skip signing artifacts except when releasing -->
                                 <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
                             </execution>
                         </executions>
                     </plugin>
