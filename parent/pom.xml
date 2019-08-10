@@ -607,7 +607,7 @@
                         <artifactId>versions-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>display-plugin-updates</id>
+                                <id>list-plugin-updates</id>
                                 <phase>initialize</phase>
                                 <goals>
                                     <goal>display-plugin-updates</goal>
@@ -618,7 +618,7 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>display-dependency-updates</id>
+                                <id>list-dependency-updates</id>
                                 <phase>initialize</phase>
                                 <goals>
                                     <goal>display-dependency-updates</goal>
