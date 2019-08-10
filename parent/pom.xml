@@ -103,6 +103,7 @@
         <displayUpdates.processDependencyManagement>false</displayUpdates.processDependencyManagement>
         <displayUpdates.processPluginDependencies>true</displayUpdates.processPluginDependencies>
         <displayUpdates.processDependencies>true</displayUpdates.processDependencies>
+        <displayUpdates.rulesUri>classpath:///zone/gryphon/maven/maven-version-comparison-rules.xml</displayUpdates.rulesUri>
 
         <!-- pedantic POM settings -->
         <pedantic-pom-enforcers.version>1.3.2</pedantic-pom-enforcers.version>
@@ -615,6 +616,7 @@
                                 <configuration>
                                     <allowSnapshots>false</allowSnapshots>
                                     <generateBackupPoms>false</generateBackupPoms>
+                                    <rulesUri>${displayUpdates.rulesUri}</rulesUri>
                                 </configuration>
                             </execution>
                             <execution>
@@ -626,16 +628,26 @@
                                 <configuration>
                                     <allowAnyUpdates>false</allowAnyUpdates>
                                     <allowMajorUpdates>false</allowMajorUpdates>
-                                    <allowMinorUpdates>true</allowMinorUpdates>
+                                    <allowMinorUpdates>false</allowMinorUpdates>
+                                    <allowIncrementalUpdates>true</allowIncrementalUpdates>
                                     <allowSnapshots>false</allowSnapshots>
                                     <generateBackupPoms>false</generateBackupPoms>
                                     <processDependencies>${displayUpdates.processDependencies}</processDependencies>
                                     <processDependencyManagement>${displayUpdates.processDependencyManagement}</processDependencyManagement>
                                     <processPluginDependencies>${displayUpdates.processPluginDependencies}</processPluginDependencies>
                                     <processPluginDependenciesInPluginManagement>${displayUpdates.processPluginDependenciesInPluginManagement}</processPluginDependenciesInPluginManagement>
+                                    <rulesUri>${displayUpdates.rulesUri}</rulesUri>
                                 </configuration>
                             </execution>
                         </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>zone.gryphon.maven</groupId>
+                                <artifactId>maven-version-comparison-rules</artifactId>
+                                <version>1.0.7-baf3752</version>
+                                <scope>compile</scope>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
