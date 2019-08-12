@@ -268,6 +268,7 @@
                                 <createBackupFile>true</createBackupFile>
                                 <expandEmptyElements>false</expandEmptyElements>
                                 <nrOfIndentSpace>4</nrOfIndentSpace>
+                                <predefinedSortOrder>${sortpom.profile}</predefinedSortOrder>
                                 <skip>${sortpom.skip}</skip>
                             </configuration>
                         </execution>
@@ -290,10 +291,10 @@
                     <executions>
                         <execution>
                             <id>analyze-dependencies</id>
-                            <phase>process-test-classes</phase>
                             <goals>
                                 <goal>analyze-only</goal>
                             </goals>
+                            <phase>process-test-classes</phase>
                             <configuration>
                                 <failOnWarning>${dependency.fail.on.warnings}</failOnWarning>
                                 <outputXML>true</outputXML>
@@ -310,6 +311,13 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${maven-plugin.enforcer.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.github.ferstl</groupId>
+                            <artifactId>pedantic-pom-enforcers</artifactId>
+                            <version>${pedantic-pom-enforcers.version}</version>
+                        </dependency>
+                    </dependencies>
                     <executions>
                         <execution>
                             <id>enforce-minimum-maven-version</id>
@@ -326,10 +334,10 @@
                         </execution>
                         <execution>
                             <id>require-dependency-upper-bounds</id>
-                            <phase>validate</phase>
                             <goals>
                                 <goal>enforce</goal>
                             </goals>
+                            <phase>validate</phase>
                             <configuration>
                                 <rules>
                                     <requireUpperBoundDeps />
@@ -340,10 +348,10 @@
                             <!-- validate dependencies are declared in the correct scope, -->
                             <!-- and that versions are declared in the correct locations. -->
                             <id>pom-validation</id>
-                            <phase>validate</phase>
                             <goals>
                                 <goal>enforce</goal>
                             </goals>
+                            <phase>validate</phase>
                             <configuration>
                                 <rules>
                                     <!-- see the following for documentation about configuration of the enforcer -->
@@ -382,13 +390,6 @@
                             </configuration>
                         </execution>
                     </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.github.ferstl</groupId>
-                            <artifactId>pedantic-pom-enforcers</artifactId>
-                            <version>${pedantic-pom-enforcers.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -402,10 +403,10 @@
                     <executions>
                         <execution>
                             <id>sign-artifacts</id>
-                            <phase>verify</phase>
                             <goals>
                                 <goal>sign</goal>
                             </goals>
+                            <phase>verify</phase>
                         </execution>
                     </executions>
                 </plugin>
@@ -426,10 +427,10 @@
                     <executions>
                         <execution>
                             <id>attach-javadoc</id>
-                            <phase>package</phase>
                             <goals>
                                 <goal>jar</goal>
                             </goals>
+                            <phase>package</phase>
                             <configuration>
                                 <quiet>${javadoc.quiet}</quiet>
                                 <failOnError>${javadoc.failOnError}</failOnError>
@@ -522,10 +523,10 @@
                         </execution>
                         <execution>
                             <id>jacoco-report</id>
-                            <phase>test</phase>
                             <goals>
                                 <goal>report</goal>
                             </goals>
+                            <phase>test</phase>
                         </execution>
                     </executions>
                 </plugin>
@@ -618,6 +619,9 @@
     <profiles>
         <profile>
             <id>release</id>
+            <properties>
+                <sortpom.skip>true</sortpom.skip>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -632,9 +636,6 @@
                     </plugin>
                 </plugins>
             </build>
-            <properties>
-                <sortpom.skip>true</sortpom.skip>
-            </properties>
         </profile>
         <profile>
             <id>display-updates</id>
@@ -646,13 +647,21 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>versions-maven-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>zone.gryphon.maven</groupId>
+                                <artifactId>maven-version-comparison-rules</artifactId>
+                                <version>1.0.8-23c82c2</version>
+                                <scope>compile</scope>
+                            </dependency>
+                        </dependencies>
                         <executions>
                             <execution>
                                 <id>plugin-updates</id>
-                                <phase>initialize</phase>
                                 <goals>
                                     <goal>display-plugin-updates</goal>
                                 </goals>
+                                <phase>initialize</phase>
                                 <configuration>
                                     <allowSnapshots>false</allowSnapshots>
                                     <generateBackupPoms>false</generateBackupPoms>
@@ -667,10 +676,10 @@
                             <!-- execution for each of major/minor/incremental updates if we want to see all updates -->
                             <execution>
                                 <id>incremental-dependency-updates</id>
-                                <phase>initialize</phase>
                                 <goals>
                                     <goal>display-dependency-updates</goal>
                                 </goals>
+                                <phase>initialize</phase>
                                 <configuration>
                                     <allowAnyUpdates>false</allowAnyUpdates>
                                     <allowMajorUpdates>false</allowMajorUpdates>
@@ -687,10 +696,10 @@
                             </execution>
                             <execution>
                                 <id>minor-dependency-updates</id>
-                                <phase>initialize</phase>
                                 <goals>
                                     <goal>display-dependency-updates</goal>
                                 </goals>
+                                <phase>initialize</phase>
                                 <configuration>
                                     <allowAnyUpdates>false</allowAnyUpdates>
                                     <allowMajorUpdates>false</allowMajorUpdates>
@@ -707,10 +716,10 @@
                             </execution>
                             <execution>
                                 <id>major-dependency-updates</id>
-                                <phase>initialize</phase>
                                 <goals>
                                     <goal>display-dependency-updates</goal>
                                 </goals>
+                                <phase>initialize</phase>
                                 <configuration>
                                     <allowAnyUpdates>false</allowAnyUpdates>
                                     <allowMajorUpdates>true</allowMajorUpdates>
@@ -726,14 +735,6 @@
                                 </configuration>
                             </execution>
                         </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>zone.gryphon.maven</groupId>
-                                <artifactId>maven-version-comparison-rules</artifactId>
-                                <version>1.0.8-23c82c2</version>
-                                <scope>compile</scope>
-                            </dependency>
-                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
