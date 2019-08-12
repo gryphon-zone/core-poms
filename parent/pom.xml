@@ -645,7 +645,7 @@
                         <artifactId>versions-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>list-plugin-updates</id>
+                                <id>plugin-updates</id>
                                 <phase>initialize</phase>
                                 <goals>
                                     <goal>display-plugin-updates</goal>
@@ -656,8 +656,14 @@
                                     <rulesUri>${displayUpdates.rulesUri}</rulesUri>
                                 </configuration>
                             </execution>
+                            <!-- When "allowAnyUpdates" is set to "false," "display-dependency-updates" only looks   -->
+                            <!-- for updates which match the first of "allowMajorUpdates", "allowMinorUpdates",      -->
+                            <!-- "allowIncrementalUpdates" which is set to true, e.g. if "allowMinorUpdates" is set  -->
+                            <!-- to "true," then the execution won't display any dependencies which have only an     -->
+                            <!-- incremental update. Thus, in order to get all updates, we need to define a separate -->
+                            <!-- execution for each of major/minor/incremental updates if we want to see all updates -->
                             <execution>
-                                <id>list-dependency-updates</id>
+                                <id>incremental-dependency-updates</id>
                                 <phase>initialize</phase>
                                 <goals>
                                     <goal>display-dependency-updates</goal>
@@ -667,6 +673,46 @@
                                     <allowMajorUpdates>false</allowMajorUpdates>
                                     <allowMinorUpdates>false</allowMinorUpdates>
                                     <allowIncrementalUpdates>true</allowIncrementalUpdates>
+                                    <allowSnapshots>false</allowSnapshots>
+                                    <generateBackupPoms>false</generateBackupPoms>
+                                    <processDependencies>${displayUpdates.processDependencies}</processDependencies>
+                                    <processDependencyManagement>${displayUpdates.processDependencyManagement}</processDependencyManagement>
+                                    <processPluginDependencies>${displayUpdates.processPluginDependencies}</processPluginDependencies>
+                                    <processPluginDependenciesInPluginManagement>${displayUpdates.processPluginDependenciesInPluginManagement}</processPluginDependenciesInPluginManagement>
+                                    <rulesUri>${displayUpdates.rulesUri}</rulesUri>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>minor-dependency-updates</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>display-dependency-updates</goal>
+                                </goals>
+                                <configuration>
+                                    <allowAnyUpdates>false</allowAnyUpdates>
+                                    <allowMajorUpdates>false</allowMajorUpdates>
+                                    <allowMinorUpdates>true</allowMinorUpdates>
+                                    <allowIncrementalUpdates>false</allowIncrementalUpdates>
+                                    <allowSnapshots>false</allowSnapshots>
+                                    <generateBackupPoms>false</generateBackupPoms>
+                                    <processDependencies>${displayUpdates.processDependencies}</processDependencies>
+                                    <processDependencyManagement>${displayUpdates.processDependencyManagement}</processDependencyManagement>
+                                    <processPluginDependencies>${displayUpdates.processPluginDependencies}</processPluginDependencies>
+                                    <processPluginDependenciesInPluginManagement>${displayUpdates.processPluginDependenciesInPluginManagement}</processPluginDependenciesInPluginManagement>
+                                    <rulesUri>${displayUpdates.rulesUri}</rulesUri>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>major-dependency-updates</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>display-dependency-updates</goal>
+                                </goals>
+                                <configuration>
+                                    <allowAnyUpdates>false</allowAnyUpdates>
+                                    <allowMajorUpdates>true</allowMajorUpdates>
+                                    <allowMinorUpdates>false</allowMinorUpdates>
+                                    <allowIncrementalUpdates>false</allowIncrementalUpdates>
                                     <allowSnapshots>false</allowSnapshots>
                                     <generateBackupPoms>false</generateBackupPoms>
                                     <processDependencies>${displayUpdates.processDependencies}</processDependencies>
