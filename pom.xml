@@ -32,6 +32,7 @@
     <modules>
         <module>bom</module>
         <module>parent</module>
+        <module>smoketest</module>
     </modules>
 
 </project>
