@@ -136,8 +136,6 @@
         <pedantic.dependencies.system>${pedantic.dependencies.system.default}</pedantic.dependencies.system>
         <pedantic.dependencies.import>${pedantic.dependencies.import.default}</pedantic.dependencies.import>
 
-        <enforcer.ban.snapshot.plugins>true</enforcer.ban.snapshot.plugins>
-
         <!-- plugin versions -->
         <maven-plugin.build-helper.version>3.0.0</maven-plugin.build-helper.version>
         <maven-plugin.clean.version>3.1.0</maven-plugin.clean.version>
@@ -366,20 +364,6 @@
                             <configuration>
                                 <rules>
                                     <requireUpperBoundDeps />
-                                </rules>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>enforce-plugin-versions</id>
-                            <goals>
-                                <goal>enforce</goal>
-                            </goals>
-                            <phase>validate</phase>
-                            <configuration>
-                                <rules>
-                                    <requirePluginVersions>
-                                        <banSnapshots>${enforcer.ban.snapshot.plugins}</banSnapshots>
-                                    </requirePluginVersions>
                                 </rules>
                             </configuration>
                         </execution>
@@ -617,9 +601,6 @@
                     </execution>
                     <execution>
                         <id>enforce-minimum-jdk-version</id>
-                    </execution>
-                    <execution>
-                        <id>enforce-plugin-versions</id>
                     </execution>
                     <execution>
                         <id>enforce-unique-dependency-decelerations</id>
