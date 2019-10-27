@@ -119,29 +119,19 @@
         <!-- to add to the list without needing to re-declare all of the defaults. It also allows them to access the default values,  -->
         <!-- even if they've overridden what the dependency plugin is using.                                                          -->
 
-        <!-- compile scoped -->
-        <pedantic.defaultCompileScopedDependencies />
-        <pedantic.compileScopedDependencies>${pedantic.defaultCompileScopedDependencies}</pedantic.compileScopedDependencies>
+        <pedantic.dependencies.compile.default />
+        <pedantic.dependencies.test.default>org.junit:junit,org.assertj:assertj-core,org.mockito:mockito-all</pedantic.dependencies.test.default>
+        <pedantic.dependencies.runtime.default />
+        <pedantic.dependencies.provided.default>org.projectlombok:lombok</pedantic.dependencies.provided.default>
+        <pedantic.dependencies.system.default />
+        <pedantic.dependencies.import.default>zone.gryphon:base-bom</pedantic.dependencies.import.default>
 
-        <!-- test scoped -->
-        <pedantic.defaultTestScopedDependencies>org.junit:junit,org.assertj:assertj-core,org.mockito:mockito-all</pedantic.defaultTestScopedDependencies>
-        <pedantic.testScopedDependencies>${pedantic.defaultTestScopedDependencies}</pedantic.testScopedDependencies>
-
-        <!-- runtime scoped -->
-        <pedantic.defaultRuntimeScopedDependencies />
-        <pedantic.runtimeScopedDependencies>${pedantic.defaultRuntimeScopedDependencies}</pedantic.runtimeScopedDependencies>
-
-        <!-- provided scoped -->
-        <pedantic.defaultProvidedScopedDependencies>org.projectlombok:lombok</pedantic.defaultProvidedScopedDependencies>
-        <pedantic.providedScopedDependencies>${pedantic.defaultProvidedScopedDependencies}</pedantic.providedScopedDependencies>
-
-        <!-- system scoped -->
-        <pedantic.defaultSystemScopedDependencies />
-        <pedantic.systemScopedDependencies>${pedantic.defaultSystemScopedDependencies}</pedantic.systemScopedDependencies>
-
-        <!-- import scoped -->
-        <pedantic.defaultImportScopedDependencies>zone.gryphon:base-bom</pedantic.defaultImportScopedDependencies>
-        <pedantic.importScopedDependencies>${pedantic.defaultImportScopedDependencies}</pedantic.importScopedDependencies>
+        <pedantic.dependencies.compile>${pedantic.dependencies.compile.default}</pedantic.dependencies.compile>
+        <pedantic.dependencies.test>${pedantic.dependencies.test.default}</pedantic.dependencies.test>
+        <pedantic.dependencies.runtime>${pedantic.dependencies.runtime.default}</pedantic.dependencies.runtime>
+        <pedantic.dependencies.provided>${pedantic.dependencies.provided.default}</pedantic.dependencies.provided>
+        <pedantic.dependencies.system>${pedantic.dependencies.system.default}</pedantic.dependencies.system>
+        <pedantic.dependencies.import>${pedantic.dependencies.import.default}</pedantic.dependencies.import>
 
         <!-- plugin versions -->
         <maven-plugin.build-helper.version>3.0.0</maven-plugin.build-helper.version>
@@ -203,7 +193,9 @@
                 <checksumPolicy>fail</checksumPolicy>
             </releases>
             <snapshots>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
             </snapshots>
             <id>ossrh</id>
             <name>Sonatype OSS Repository Hosting</name>
@@ -366,12 +358,12 @@
                                         <manageDependencyExclusions>true</manageDependencyExclusions>
 
                                         <!-- DEPENDENCY_SCOPE configuration -->
-                                        <compileDependencies>${pedantic.compileScopedDependencies}</compileDependencies>
-                                        <providedDependencies>${pedantic.providedScopedDependencies}</providedDependencies>
-                                        <runtimeDependencies>${pedantic.runtimeScopedDependencies}</runtimeDependencies>
-                                        <systemDependencies>${pedantic.systemScopedDependencies}</systemDependencies>
-                                        <testDependencies>${pedantic.testScopedDependencies}</testDependencies>
-                                        <importDependencies>${pedantic.importScopedDependencies}</importDependencies>
+                                        <compileDependencies>${pedantic.dependencies.compile}</compileDependencies>
+                                        <providedDependencies>${pedantic.dependencies.provided}</providedDependencies>
+                                        <runtimeDependencies>${pedantic.dependencies.runtime}</runtimeDependencies>
+                                        <systemDependencies>${pedantic.dependencies.system}</systemDependencies>
+                                        <testDependencies>${pedantic.dependencies.test}</testDependencies>
+                                        <importDependencies>${pedantic.dependencies.import}</importDependencies>
 
                                         <!-- DEPENDENCY_MANAGEMENT_LOCATION configuration -->
                                         <allowParentPomsForDependencyManagement>true</allowParentPomsForDependencyManagement>
