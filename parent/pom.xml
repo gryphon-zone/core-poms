@@ -82,6 +82,9 @@
         <java.version.minor>8</java.version.minor>
         <java.version>${java.version.major}.${java.version.minor}</java.version>
 
+        <!-- `release` option wasn't added to `javac` until Java 9 -->
+        <jdk.version.rule>[1.9,)</jdk.version.rule>
+
         <!-- https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html -->
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -132,6 +135,8 @@
         <pedantic.dependencies.provided>${pedantic.dependencies.provided.default}</pedantic.dependencies.provided>
         <pedantic.dependencies.system>${pedantic.dependencies.system.default}</pedantic.dependencies.system>
         <pedantic.dependencies.import>${pedantic.dependencies.import.default}</pedantic.dependencies.import>
+
+        <enforcer.ban.snapshot.plugins>true</enforcer.ban.snapshot.plugins>
 
         <!-- plugin versions -->
         <maven-plugin.build-helper.version>3.0.0</maven-plugin.build-helper.version>
@@ -316,6 +321,7 @@
                             <goals>
                                 <goal>enforce</goal>
                             </goals>
+                            <phase>validate</phase>
                             <configuration>
                                 <rules>
                                     <requireMavenVersion>
@@ -325,7 +331,33 @@
                             </configuration>
                         </execution>
                         <execution>
-                            <id>require-dependency-upper-bounds</id>
+                            <id>enforce-minimum-jdk-version</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <phase>validate</phase>
+                            <configuration>
+                                <rules>
+                                    <requireJavaVersion>
+                                        <version>${jdk.version.rule}</version>
+                                    </requireJavaVersion>
+                                </rules>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>enforce-unique-dependency-decelerations</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <phase>validate</phase>
+                            <configuration>
+                                <rules>
+                                    <banDuplicatePomDependencyVersions />
+                                </rules>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>enforce-transitive-dependency-versions</id>
                             <goals>
                                 <goal>enforce</goal>
                             </goals>
@@ -337,9 +369,23 @@
                             </configuration>
                         </execution>
                         <execution>
+                            <id>enforce-plugin-versions</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <phase>validate</phase>
+                            <configuration>
+                                <rules>
+                                    <requirePluginVersions>
+                                        <banSnapshots>${enforcer.ban.snapshot.plugins}</banSnapshots>
+                                    </requirePluginVersions>
+                                </rules>
+                            </configuration>
+                        </execution>
+                        <execution>
                             <!-- validate dependencies are declared in the correct scope, -->
                             <!-- and that versions are declared in the correct locations. -->
-                            <id>pom-validation</id>
+                            <id>enforce-pedantic-pom</id>
                             <goals>
                                 <goal>enforce</goal>
                             </goals>
@@ -564,10 +610,19 @@
                         <id>enforce-minimum-maven-version</id>
                     </execution>
                     <execution>
-                        <id>require-dependency-upper-bounds</id>
+                        <id>enforce-minimum-jdk-version</id>
                     </execution>
                     <execution>
-                        <id>pom-validation</id>
+                        <id>enforce-plugin-versions</id>
+                    </execution>
+                    <execution>
+                        <id>enforce-unique-dependency-decelerations</id>
+                    </execution>
+                    <execution>
+                        <id>enforce-transitive-dependency-versions</id>
+                    </execution>
+                    <execution>
+                        <id>enforce-pedantic-pom</id>
                     </execution>
                 </executions>
             </plugin>
