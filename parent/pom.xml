@@ -631,9 +631,6 @@
         </profile>
         <profile>
             <id>display-updates</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
