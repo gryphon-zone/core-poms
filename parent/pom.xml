@@ -73,17 +73,17 @@
         <base-bom.version>${core-poms.version}</base-bom.version>
 
         <!-- minimum required Maven version -->
-        <maven.minimumVersion>3.3.9</maven.minimumVersion>
+        <maven.version.minimum>3.3.9</maven.version.minimum>
 
         <!-- Compilation settings -->
-        <java.majorVersion>1</java.majorVersion>
-        <java.minorVersion>8</java.minorVersion>
-        <java.version>${java.majorVersion}.${java.minorVersion}</java.version>
+        <java.version.major>1</java.version.major>
+        <java.version.minor>8</java.version.minor>
+        <java.version>${java.version.major}.${java.version.minor}</java.version>
 
         <!-- https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html -->
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <maven.compiler.release>${java.minorVersion}</maven.compiler.release>
+        <maven.compiler.release>${java.version.minor}</maven.compiler.release>
         <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 
@@ -325,7 +325,7 @@
                             <configuration>
                                 <rules>
                                     <requireMavenVersion>
-                                        <version>${maven.minimumVersion}</version>
+                                        <version>${maven.version.minimum}</version>
                                     </requireMavenVersion>
                                 </rules>
                             </configuration>
