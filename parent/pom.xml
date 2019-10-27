@@ -19,7 +19,7 @@
 
     <groupId>zone.gryphon</groupId>
     <artifactId>base-pom</artifactId>
-    <version>0.11-SNAPSHOT</version>
+    <version>0.20-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
@@ -70,7 +70,7 @@
 
         <!-- property will be automatically updated during a maven release and can be used by -->
         <!-- child projects to refer to the version of the core POMs being pulled in.         -->
-        <core-poms.version>0.11-SNAPSHOT</core-poms.version>
+        <core-poms.version>0.20-SNAPSHOT</core-poms.version>
         <base-pom.version>${core-poms.version}</base-pom.version>
         <base-bom.version>${core-poms.version}</base-bom.version>
 
