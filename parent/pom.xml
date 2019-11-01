@@ -111,6 +111,9 @@
         <!-- release plugin settings -->
         <release.profiles>release</release.profiles>
 
+        <!-- skip site deploy by default -->
+        <maven.site.deploy.skip>true</maven.site.deploy.skip>
+
         <!-- pom sort settings -->
         <sortpom.skip>false</sortpom.skip>
         <sortpom.profile>recommended_2008_06</sortpom.profile>
