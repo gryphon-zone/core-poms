@@ -71,7 +71,7 @@
         <site>
             <!-- setup site which publishes into the "docs/" folder of the project, for use with github pages -->
             <id>github-pages</id>
-            <url>file://${basedir}/docs</url>
+            <url>file://docs</url>
         </site>
     </distributionManagement>
 
