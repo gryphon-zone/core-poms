@@ -273,10 +273,11 @@
                                 <goal>sort</goal>
                             </goals>
                             <configuration>
+                                <!-- don't sort plugins, Maven determines run order based on deceleration order -->
+                                <sortPlugins />
                                 <keepBlankLines>true</keepBlankLines>
                                 <encoding>${project.build.sourceEncoding}</encoding>
                                 <sortDependencies>scope,groupId,artifactId</sortDependencies>
-                                <sortPlugins>scope,groupId,artifactId</sortPlugins>
                                 <sortModules>true</sortModules>
                                 <sortProperties>false</sortProperties>
                                 <createBackupFile>true</createBackupFile>
