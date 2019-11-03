@@ -67,8 +67,9 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
         <site>
-            <id>${project.artifactId}-site</id>
-            <url>${project.url}</url>
+            <!-- setup site which publishes into the "docs/" folder of the project, for use with github pages -->
+            <id>github-pages</id>
+            <url>file:${project.basedir}/docs</url>
         </site>
     </distributionManagement>
 
