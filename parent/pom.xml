@@ -151,6 +151,8 @@
         <pedantic.dependencies.system>${pedantic.dependencies.system.default}</pedantic.dependencies.system>
         <pedantic.dependencies.import>${pedantic.dependencies.import.default}</pedantic.dependencies.import>
 
+        <jacoco.skip>false</jacoco.skip>
+
         <!-- plugin versions -->
         <maven-plugin.build-helper.version>3.0.0</maven-plugin.build-helper.version>
         <maven-plugin.clean.version>3.1.0</maven-plugin.clean.version>
@@ -363,7 +365,7 @@
                             </configuration>
                         </execution>
                         <execution>
-                            <id>enforce-unique-dependency-decelerations</id>
+                            <id>enforce-unique-dependency-declarations</id>
                             <goals>
                                 <goal>enforce</goal>
                             </goals>
@@ -571,7 +573,9 @@
                             <goals>
                                 <goal>prepare-agent</goal>
                             </goals>
+                            <phase>initialize</phase>
                             <configuration>
+                                <skip>${jacoco.skip}</skip>
                                 <output>file</output>
                             </configuration>
                         </execution>
@@ -580,7 +584,10 @@
                             <goals>
                                 <goal>report</goal>
                             </goals>
-                            <phase>test</phase>
+                            <phase>prepare-package</phase>
+                            <configuration>
+                                <skip>${jacoco.skip}</skip>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
@@ -629,7 +636,7 @@
                         <id>enforce-minimum-jdk-version</id>
                     </execution>
                     <execution>
-                        <id>enforce-unique-dependency-decelerations</id>
+                        <id>enforce-unique-dependency-declarations</id>
                     </execution>
                     <execution>
                         <id>enforce-transitive-dependency-versions</id>

@@ -20,9 +20,12 @@ import org.junit.Test;
 
 import java.beans.ConstructorProperties;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class SimplePojoTest {
 
     private final SimplePojo foo = SimplePojo.builder()
@@ -46,6 +49,16 @@ public class SimplePojoTest {
         assertThat(annotation).isNotNull();
 
         assertThat(annotation.value()).containsExactly("id");
+
+        assertThat(declaredConstructor.newInstance("foo")).isInstanceOf(SimplePojo.class);
+
+        try {
+            assertThat(declaredConstructor.newInstance(new Object[]{null})).isInstanceOf(SimplePojo.class);
+            failBecauseExceptionWasNotThrown(InvocationTargetException.class);
+        } catch (InvocationTargetException e) {
+            assertThat(e).hasCauseInstanceOf(NullPointerException.class);
+            assertThat(e.getCause()).hasMessageContaining("id");
+        }
     }
 
     @Test
@@ -53,6 +66,7 @@ public class SimplePojoTest {
         assertThat(foo).isNotEqualTo(null);
         assertThat(foo).isNotEqualTo("foo");
         assertThat(foo).isNotEqualTo(bar);
+        assertThat(foo).isEqualTo(foo);
         assertThat(foo).isEqualTo(alsoFoo);
         assertThat(foo).isEqualTo(foo.toBuilder().build());
     }
