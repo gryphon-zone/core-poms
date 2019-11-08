@@ -470,6 +470,7 @@
                     <version>${maven-plugin.javadoc.version}</version>
                     <configuration>
                         <quiet>${javadoc.quiet}</quiet>
+                        <doclint>none</doclint>
                     </configuration>
                     <executions>
                         <execution>
