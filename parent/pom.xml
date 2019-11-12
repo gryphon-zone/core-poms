@@ -112,7 +112,7 @@
         <!-- skip site deploy by default -->
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
         <scmpublish.scm.branch>gh-pages</scmpublish.scm.branch>
-        <scmpublish.scm.localCheckout>true</scmpublish.scm.localCheckout>
+        <scmpublish.scm.localCheckout>false</scmpublish.scm.localCheckout>
         <scmpublish.checkinComment>[maven-scm-publish-plugin] upload site for ${project.artifactId}@${project.version}</scmpublish.checkinComment>
 
         <!-- pom sort settings -->
