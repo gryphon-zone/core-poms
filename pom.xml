@@ -35,4 +35,13 @@
         <module>smoketest</module>
     </modules>
 
+    <scm>
+        <?SORTPOM IGNORE?>
+        <tag>HEAD</tag>
+        <url>https://github.com/gryphon-zone/core-poms</url>
+        <connection>scm:git:git@github.com:gryphon-zone/core-poms.git</connection>
+        <developerConnection>scm:git:git@github.com:gryphon-zone/core-poms.git</developerConnection>
+        <?SORTPOM RESUME?>
+    </scm>
+
 </project>
