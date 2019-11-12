@@ -68,11 +68,6 @@
             <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
-        <site>
-            <!-- setup site which publishes into the "docs/" folder of the project, for use with github pages -->
-            <id>github-pages</id>
-            <url>file://${project.basedir}/docs</url>
-        </site>
     </distributionManagement>
 
     <properties>
@@ -116,6 +111,9 @@
 
         <!-- skip site deploy by default -->
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
+        <scmpublish.scm.branch>gh-pages</scmpublish.scm.branch>
+        <scmpublish.scm.localCheckout>true</scmpublish.scm.localCheckout>
+        <scmpublish.checkinComment>[maven-scm-publish-plugin] upload site for ${project.artifactId}@${project.version}</scmpublish.checkinComment>
 
         <!-- pom sort settings -->
         <sortpom.skip>false</sortpom.skip>
@@ -736,6 +734,42 @@
                             <execution>
                                 <!-- skip signing artifacts except when releasing -->
                                 <id>sign-artifacts</id>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>gh-pages</id>
+            <activation>
+                <file>
+                    <exists>${basedir}/src/site/.gh-pages</exists>
+                </file>
+            </activation>
+            <distributionManagement>
+                <site>
+                    <id>gh-pages</id>
+                    <url>${project.scm.developerConnection}</url>
+                </site>
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-scm-publish-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>publish-site-to-scm</id>
+                                <goals>
+                                    <goal>publish-scm</goal>
+                                </goals>
+                                <phase>site-deploy</phase>
+                                <configuration>
+                                    <localCheckout>${scmpublish.scm.localCheckout}</localCheckout>
+                                    <scmBranch>${scmpublish.scm.branch}</scmBranch>
+                                    <checkinComment>${scmpublish.checkinComment}</checkinComment>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
