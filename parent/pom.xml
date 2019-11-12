@@ -172,7 +172,10 @@
         <maven-plugin.release.version>2.5.3</maven-plugin.release.version>
         <maven-plugin.resources.version>3.1.0</maven-plugin.resources.version>
         <maven-plugin.shade.version>3.2.1</maven-plugin.shade.version>
-        <maven-plugin.site.version>3.8.2</maven-plugin.site.version>
+        <!-- note: maven-site-plugin is intentionally on an older version, -->
+        <!-- <code> tags do not work properly in generated sites on 3.8.2. -->
+        <!-- ensure this has been fixed before upgrading the version.      -->
+        <maven-plugin.site.version>3.7.1</maven-plugin.site.version>
         <maven-plugin.sortpom.version>2.10.0</maven-plugin.sortpom.version>
         <maven-plugin.source.version>3.1.0</maven-plugin.source.version>
         <maven-plugin.surefire.version>3.0.0-M3</maven-plugin.surefire.version>
