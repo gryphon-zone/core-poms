@@ -523,6 +523,14 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>${maven-plugin.site.version}</version>
+                    <executions>
+                        <execution>
+                            <!-- disable the default deploy goal, since no gryphon zone projects use it -->
+                            <!-- (and any site deploys are likely to require a custom deploy execution) -->
+                            <id>default-deploy</id>
+                            <phase>none</phase>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
