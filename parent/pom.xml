@@ -25,7 +25,7 @@
     <name>${project.artifactId}</name>
     <description>Base POM for Gryphon Zone projects</description>
 
-    <url>https://github.com/gryphon-zone/core-poms</url>
+    <url>https://gryphon-zone.github.io/core-poms/base-pom</url>
 
     <inceptionYear>2019</inceptionYear>
 
@@ -109,10 +109,7 @@
         <!-- release plugin settings -->
         <release.profiles>release</release.profiles>
 
-        <!-- skip site deploy by default -->
-        <maven.site.deploy.skip>true</maven.site.deploy.skip>
         <scmpublish.scm.branch>gh-pages</scmpublish.scm.branch>
-        <scmpublish.scm.localCheckout>false</scmpublish.scm.localCheckout>
         <scmpublish.checkinComment>[maven-scm-publish-plugin] upload site for ${project.artifactId}@${project.version}</scmpublish.checkinComment>
 
         <!-- pom sort settings -->
@@ -747,6 +744,10 @@
                     <exists>${basedir}/src/site/.gh-pages</exists>
                 </file>
             </activation>
+            <properties>
+                <!-- deploy site using maven-scm-publish-plugin, not maven-site-plugin -->
+                <maven.site.deploy.skip>true</maven.site.deploy.skip>
+            </properties>
             <distributionManagement>
                 <site>
                     <id>gh-pages</id>
@@ -759,6 +760,13 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-site-plugin</artifactId>
                         <executions>
+                            <execution>
+                                <id>default-deploy</id>
+                                <phase>none</phase>
+                                <configuration>
+                                    <skipDeploy>true</skipDeploy>
+                                </configuration>
+                            </execution>
                             <execution>
                                 <id>stage-site</id>
                                 <goals>
@@ -779,7 +787,6 @@
                                 </goals>
                                 <phase>site-deploy</phase>
                                 <configuration>
-                                    <localCheckout>${scmpublish.scm.localCheckout}</localCheckout>
                                     <scmBranch>${scmpublish.scm.branch}</scmBranch>
                                     <checkinComment>${scmpublish.checkinComment}</checkinComment>
                                 </configuration>
