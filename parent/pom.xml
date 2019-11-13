@@ -744,16 +744,16 @@
                     <exists>${basedir}/src/site/.gh-pages</exists>
                 </file>
             </activation>
-            <properties>
-                <!-- deploy site using maven-scm-publish-plugin, not maven-site-plugin -->
-                <maven.site.deploy.skip>true</maven.site.deploy.skip>
-            </properties>
             <distributionManagement>
                 <site>
                     <id>gh-pages</id>
                     <url>${project.scm.developerConnection}</url>
                 </site>
             </distributionManagement>
+            <properties>
+                <!-- deploy site using maven-scm-publish-plugin, not maven-site-plugin -->
+                <maven.site.deploy.skip>true</maven.site.deploy.skip>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
