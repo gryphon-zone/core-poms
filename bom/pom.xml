@@ -38,12 +38,6 @@
     </distributionManagement>
 
     <properties>
-        <scmpublish.content>${project.parent.build.directory}/staging</scmpublish.content>
-        <scmpublish.checkoutDirectory>${project.parent.build.directory}/scmpublish-checkout</scmpublish.checkoutDirectory>
-        <scmpublish.pubScmUrl>${project.parent.distributionManagement.site.url}</scmpublish.pubScmUrl>
-
-        <displayUpdates.processDependencyManagement>true</displayUpdates.processDependencyManagement>
-
         <assertj.version>3.13.2</assertj.version>
         <junit.version>4.12</junit.version>
         <logback.version>1.2.3</logback.version>
