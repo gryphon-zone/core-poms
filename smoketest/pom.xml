@@ -45,7 +45,9 @@
     </distributionManagement>
 
     <properties>
-
+        <scmpublish.content>${project.parent.build.directory}/staging</scmpublish.content>
+        <scmpublish.checkoutDirectory>${project.parent.build.directory}/scmpublish-checkout</scmpublish.checkoutDirectory>
+        <scmpublish.pubScmUrl>${project.parent.distributionManagement.site.url}</scmpublish.pubScmUrl>
     </properties>
 
     <dependencyManagement>

@@ -131,6 +131,10 @@
         <scmpublish.scm.branch>gh-pages</scmpublish.scm.branch>
         <scmpublish.checkinComment>[maven-scm-publish-plugin] upload site for ${project.artifactId}@${project.version}</scmpublish.checkinComment>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
+        <scmpublish.content>${project.build.directory}/staging</scmpublish.content>
+        <scmpublish.checkoutDirectory>${project.build.directory}/scmpublish-checkout</scmpublish.checkoutDirectory>
+        <scmpublish.pubScmUrl>${project.distributionManagement.site.url}</scmpublish.pubScmUrl>
+        <scmpublish.tryUpdate>true</scmpublish.tryUpdate>
 
         <!-- pom sort settings -->
         <sortpom.skip>false</sortpom.skip>
@@ -801,6 +805,10 @@
                                 </goals>
                                 <phase>site-deploy</phase>
                                 <configuration>
+                                    <pubScmUrl>${scmpublish.pubScmUrl}</pubScmUrl>
+                                    <checkoutDirectory>${scmpublish.checkoutDirectory}</checkoutDirectory>
+                                    <tryUpdate>${scmpublish.tryUpdate}</tryUpdate>
+                                    <content>${scmpublish.content}</content>
                                     <scmBranch>${scmpublish.scm.branch}</scmBranch>
                                     <checkinComment>${scmpublish.checkinComment}</checkinComment>
                                 </configuration>
