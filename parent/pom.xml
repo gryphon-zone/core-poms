@@ -68,6 +68,10 @@
             <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <site>
+            <id>gh-pages</id>
+            <url>${project.scm.developerConnection}</url>
+        </site>
     </distributionManagement>
 
     <properties>
@@ -111,6 +115,7 @@
 
         <scmpublish.scm.branch>gh-pages</scmpublish.scm.branch>
         <scmpublish.checkinComment>[maven-scm-publish-plugin] upload site for ${project.artifactId}@${project.version}</scmpublish.checkinComment>
+        <maven.site.deploy.skip>true</maven.site.deploy.skip>
 
         <!-- pom sort settings -->
         <sortpom.skip>false</sortpom.skip>
@@ -752,38 +757,8 @@
                     <exists>${basedir}/src/site/.gh-pages</exists>
                 </file>
             </activation>
-            <distributionManagement>
-                <site>
-                    <id>gh-pages</id>
-                    <url>${project.scm.developerConnection}</url>
-                </site>
-            </distributionManagement>
-            <properties>
-                <!-- deploy site using maven-scm-publish-plugin, not maven-site-plugin -->
-                <maven.site.deploy.skip>true</maven.site.deploy.skip>
-            </properties>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-site-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>default-deploy</id>
-                                <phase>none</phase>
-                                <configuration>
-                                    <skipDeploy>true</skipDeploy>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>stage-site</id>
-                                <goals>
-                                    <goal>stage</goal>
-                                </goals>
-                                <phase>post-site</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-scm-publish-plugin</artifactId>
@@ -805,7 +780,7 @@
             </build>
         </profile>
         <profile>
-            <id>attach-site-descriptor</id>
+            <id>site</id>
             <activation>
                 <file>
                     <exists>${basedir}/src/site/site.xml</exists>
@@ -818,11 +793,24 @@
                         <artifactId>maven-site-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>attach-default-site-descriptor</id>
+                                <id>attach-site-descriptor</id>
                                 <goals>
                                     <goal>attach-descriptor</goal>
                                 </goals>
                                 <phase>package</phase>
+                            </execution>
+                            <execution>
+                                <!-- disable default-site and replace with our custom execution -->
+                                <id>default-site</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>build-site</id>
+                                <goals>
+                                    <goal>site</goal>
+                                    <goal>stage</goal>
+                                </goals>
+                                <phase>site</phase>
                             </execution>
                         </executions>
                     </plugin>
