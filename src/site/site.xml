@@ -15,4 +15,46 @@
   -->
 <project xmlns="http://maven.apache.org/DECORATION/1.8.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.8.0 http://maven.apache.org/xsd/decoration-1.8.0.xsd" name="${project.artifactId}">
 
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.7</version>
+    </skin>
+
+    <edit>${project.scm.url}</edit>
+
+    <custom>
+        <fluidoSkin>
+            <sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
+        </fluidoSkin>
+    </custom>
+
+    <publishDate position="right"/>
+    <version position="right"/>
+
+    <body>
+
+        <!-- Breadcrumbs which *every* child project will inherit -->
+        <breadcrumbs>
+            <item name="Gryphon Zone" href="https://gryphon.zone"/>
+            <item name="Projects" href="https://github.com/gryphon-zone"/>
+
+            <!--
+            ~ Note: because all sub projects will inherit all breadcrumbs from this file,
+            ~ we can't safely add an entry for `base-pom`.
+            ~
+            ~ If we added a an entry with a hardcoded name/url, it would make it appear like every project was
+            ~ a sub-project of `base-pom`.
+            ~
+            ~ If we added an entry which used property interpolation (like `project.artifactId`), it would
+            ~ be evaluated in the context of the child POM, and have incorrect values.
+            ~
+            ~ So instead, we add nothing.
+            -->
+        </breadcrumbs>
+
+        <!-- Menus which *every* child project will inherit -->
+        <menu ref="reports" inherit="bottom" />
+
+    </body>
 </project>

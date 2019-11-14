@@ -17,29 +17,935 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>zone.gryphon</groupId>
-        <artifactId>base-pom</artifactId>
-        <version>0.20-SNAPSHOT</version>
-        <relativePath>parent/pom.xml</relativePath>
-    </parent>
-
-    <artifactId>core-poms</artifactId>
+    <groupId>zone.gryphon</groupId>
+    <artifactId>base-pom</artifactId>
+    <version>0.20-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
+    <description>Base POM for Gryphon Zone projects</description>
+
+    <url>https://gryphon-zone.github.io/core-poms</url>
+
+    <inceptionYear>2019</inceptionYear>
+
+    <organization>
+        <name>Gryphon Zone</name>
+        <url>https://gryphon.zone</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>tyrol</id>
+            <name>Tyrol</name>
+            <email>tyrol@gryphon.zone</email>
+            <organizationUrl>https://github.com/gryphon-zone</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>-6</timezone>
+        </developer>
+    </developers>
 
     <modules>
         <module>bom</module>
-        <module>parent</module>
         <module>smoketest</module>
     </modules>
 
+    <scm>
+        <?SORTPOM IGNORE?>
+        <tag>HEAD</tag>
+        <url>https://github.com/gryphon-zone/core-poms</url>
+        <connection>scm:git:git@github.com:gryphon-zone/core-poms.git</connection>
+        <developerConnection>scm:git:git@github.com:gryphon-zone/core-poms.git</developerConnection>
+        <?SORTPOM RESUME?>
+    </scm>
+
     <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
         <site>
             <id>gh-pages</id>
-            <url>scm:git:git@github.com:gryphon-zone/core-poms.git</url>
+            <!--
+            ~ Note: projects using this POM as a parent should hardcode this value
+            ~ and *not* use Maven properties. If the value is a property, Maven appends
+            ~ data to it in child POMs.
+            ~
+            ~ It's defined as a property here to ensure that if a child project forgets
+            ~ to re-define it, they don't accidentally overwrite the site for the this project.
+            -->
+            <url>${project.scm.developerConnection}</url>
         </site>
     </distributionManagement>
 
+    <properties>
+        <!-- always use UTF-8 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!--
+        ~ This property will be updated automatically during a Maven release to the released version,
+        ~ and can be used by child projects to refer to the version of the core POMs being pulled in.
+        -->
+        <core-poms.version>0.20-SNAPSHOT</core-poms.version>
+        <base-pom.version>${core-poms.version}</base-pom.version>
+        <base-bom.version>${core-poms.version}</base-bom.version>
+
+        <!-- minimum required Maven version -->
+        <maven.version.minimum>3.3.9</maven.version.minimum>
+
+        <!-- Compilation settings -->
+        <java.version.major>1</java.version.major>
+        <java.version.minor>8</java.version.minor>
+        <java.version>${java.version.major}.${java.version.minor}</java.version>
+
+        <!-- `release` option wasn't added to `javac` until Java 9 -->
+        <jdk.version.rule>[1.9,)</jdk.version.rule>
+
+        <!-- https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html -->
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.release>${java.version.minor}</maven.compiler.release>
+        <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
+        <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
+
+        <!-- dependency analyzer settings -->
+        <dependency.fail.on.warnings>true</dependency.fail.on.warnings>
+
+        <!-- javadoc plugin settings -->
+        <javadoc.quiet>true</javadoc.quiet>
+        <javadoc.failOnError>false</javadoc.failOnError>
+
+        <!-- release plugin settings -->
+        <release.profiles>release</release.profiles>
+
+        <scmpublish.scm.branch>gh-pages</scmpublish.scm.branch>
+        <scmpublish.checkinComment>[maven-scm-publish-plugin] upload site for ${project.artifactId}@${project.version}</scmpublish.checkinComment>
+        <maven.site.deploy.skip>true</maven.site.deploy.skip>
+
+        <!-- pom sort settings -->
+        <sortpom.skip>false</sortpom.skip>
+        <sortpom.profile>recommended_2008_06</sortpom.profile>
+
+        <!-- display dependency update settings -->
+        <displayUpdates.processPluginDependenciesInPluginManagement>true</displayUpdates.processPluginDependenciesInPluginManagement>
+        <displayUpdates.processDependencyManagement>false</displayUpdates.processDependencyManagement>
+        <displayUpdates.processPluginDependencies>true</displayUpdates.processPluginDependencies>
+        <displayUpdates.processDependencies>true</displayUpdates.processDependencies>
+        <displayUpdates.rulesUri>classpath:///zone/gryphon/maven/maven-version-comparison-rules.xml</displayUpdates.rulesUri>
+
+        <!-- pedantic POM settings -->
+        <pedantic-pom-enforcers.version>1.3.2</pedantic-pom-enforcers.version>
+
+        <!--
+        ~ define hardcoded values in "default" settings so that sub-poms can easily add to the list without starting from scratch
+        ~ e.g. child POMs can do:
+        ~ <pedantic.testScopedDependencies>${pedantic.defaultTestScopedDependencies},com.foo:bar</pedantic.testScopedDependencies>
+        ~ to add to the list without needing to re-declare all of the defaults. It also allows them to access the default values,
+        ~ even if they've overridden what the dependency plugin is using.
+        -->
+        <pedantic.dependencies.compile.default />
+        <pedantic.dependencies.test.default>org.junit:junit,org.assertj:assertj-core,org.mockito:mockito-all</pedantic.dependencies.test.default>
+        <pedantic.dependencies.runtime.default />
+        <pedantic.dependencies.provided.default>org.projectlombok:lombok</pedantic.dependencies.provided.default>
+        <pedantic.dependencies.system.default />
+        <pedantic.dependencies.import.default>zone.gryphon:base-bom</pedantic.dependencies.import.default>
+
+        <pedantic.dependencies.compile>${pedantic.dependencies.compile.default}</pedantic.dependencies.compile>
+        <pedantic.dependencies.test>${pedantic.dependencies.test.default}</pedantic.dependencies.test>
+        <pedantic.dependencies.runtime>${pedantic.dependencies.runtime.default}</pedantic.dependencies.runtime>
+        <pedantic.dependencies.provided>${pedantic.dependencies.provided.default}</pedantic.dependencies.provided>
+        <pedantic.dependencies.system>${pedantic.dependencies.system.default}</pedantic.dependencies.system>
+        <pedantic.dependencies.import>${pedantic.dependencies.import.default}</pedantic.dependencies.import>
+
+        <jacoco.skip>false</jacoco.skip>
+
+        <!-- plugin versions -->
+        <maven-plugin.build-helper.version>3.0.0</maven-plugin.build-helper.version>
+        <maven-plugin.clean.version>3.1.0</maven-plugin.clean.version>
+        <maven-plugin.compiler.version>3.8.1</maven-plugin.compiler.version>
+        <maven-plugin.dependency.version>3.1.1</maven-plugin.dependency.version>
+        <maven-plugin.deploy.version>3.0.0-M1</maven-plugin.deploy.version>
+        <maven-plugin.enforcer.version>3.0.0-M2</maven-plugin.enforcer.version>
+        <maven-plugin.exec.version>1.6.0</maven-plugin.exec.version>
+        <maven-plugin.gpg.version>1.6</maven-plugin.gpg.version>
+        <maven-plugin.install.version>3.0.0-M1</maven-plugin.install.version>
+        <maven-plugin.jacoco.version>0.8.4</maven-plugin.jacoco.version>
+        <maven-plugin.jar.version>3.1.2</maven-plugin.jar.version>
+        <maven-plugin.javadoc.version>3.1.1</maven-plugin.javadoc.version>
+        <maven-plugin.nexus-staging.version>1.6.8</maven-plugin.nexus-staging.version>
+        <maven-plugin.plugin.version>3.6.0</maven-plugin.plugin.version>
+        <maven-plugin.project-info-reports.version>3.0.0</maven-plugin.project-info-reports.version>
+        <maven-plugin.release.version>2.5.3</maven-plugin.release.version>
+        <maven-plugin.resources.version>3.1.0</maven-plugin.resources.version>
+        <maven-plugin.scm-publish.version>3.0.0</maven-plugin.scm-publish.version>
+        <maven-plugin.shade.version>3.2.1</maven-plugin.shade.version>
+        <!--
+        ~ note: maven-site-plugin is intentionally on an older version,
+        ~ <code> tags do not work properly in generated sites on 3.8.2.
+        ~ ensure this has been fixed before upgrading the version.
+        -->
+        <maven-plugin.site.version>3.7.1</maven-plugin.site.version>
+        <maven-plugin.sortpom.version>2.10.0</maven-plugin.sortpom.version>
+        <maven-plugin.source.version>3.1.0</maven-plugin.source.version>
+        <maven-plugin.surefire.version>3.0.0-M3</maven-plugin.surefire.version>
+        <maven-plugin.versions.version>2.7</maven-plugin.versions.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!--
+                ~ "fake" entry to cause the maven-release-plugin to realize that
+                ~ ${core-poms.version} refers to the project version, and should
+                ~ be updated during a Maven release.
+                -->
+                <groupId>zone.gryphon</groupId>
+                <artifactId>base-pom</artifactId>
+                <version>${core-poms.version}</version>
+                <classifier>pom</classifier>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+            <id>ossrh</id>
+            <name>Sonatype OSS Repository Hosting</name>
+            <url>https://oss.sonatype.org/content/groups/public</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <layout>default</layout>
+        </pluginRepository>
+        <pluginRepository>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>fail</checksumPolicy>
+            </snapshots>
+            <id>ossrh</id>
+            <name>Sonatype OSS Repository Hosting</name>
+            <url>https://oss.sonatype.org/content/groups/public</url>
+            <layout>default</layout>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <!--
+                    ~ Use the following tags to exclude sections of the POM from sorting:
+                    ~     <?SORTPOM IGNORE?>
+                    ~     <?SORTPOM RESUME?>
+                    ~
+                    ~ See https://github.com/Ekryd/sortpom/wiki/IgnoringSections for details.
+                    -->
+                    <groupId>com.github.ekryd.sortpom</groupId>
+                    <artifactId>sortpom-maven-plugin</artifactId>
+                    <version>${maven-plugin.sortpom.version}</version>
+                    <executions>
+                        <execution>
+                            <id>sort-pom</id>
+                            <goals>
+                                <goal>sort</goal>
+                            </goals>
+                            <configuration>
+                                <!-- don't sort plugins, Maven determines run order based on deceleration order -->
+                                <sortPlugins />
+                                <keepBlankLines>true</keepBlankLines>
+                                <encoding>${project.build.sourceEncoding}</encoding>
+                                <sortDependencies>scope,groupId,artifactId</sortDependencies>
+                                <sortModules>true</sortModules>
+                                <sortProperties>false</sortProperties>
+                                <createBackupFile>true</createBackupFile>
+                                <expandEmptyElements>false</expandEmptyElements>
+                                <nrOfIndentSpace>4</nrOfIndentSpace>
+                                <predefinedSortOrder>${sortpom.profile}</predefinedSortOrder>
+                                <skip>${sortpom.skip}</skip>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${maven-plugin.clean.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-plugin.compiler.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${maven-plugin.dependency.version}</version>
+                    <executions>
+                        <execution>
+                            <id>analyze-dependencies</id>
+                            <goals>
+                                <goal>analyze-only</goal>
+                            </goals>
+                            <phase>process-test-classes</phase>
+                            <configuration>
+                                <failOnWarning>${dependency.fail.on.warnings}</failOnWarning>
+                                <outputXML>true</outputXML>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven-plugin.deploy.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven-plugin.enforcer.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.github.ferstl</groupId>
+                            <artifactId>pedantic-pom-enforcers</artifactId>
+                            <version>${pedantic-pom-enforcers.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <executions>
+                        <execution>
+                            <id>enforce-minimum-maven-version</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <phase>validate</phase>
+                            <configuration>
+                                <rules>
+                                    <requireMavenVersion>
+                                        <version>${maven.version.minimum}</version>
+                                    </requireMavenVersion>
+                                </rules>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>enforce-minimum-jdk-version</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <phase>validate</phase>
+                            <configuration>
+                                <rules>
+                                    <requireJavaVersion>
+                                        <version>${jdk.version.rule}</version>
+                                    </requireJavaVersion>
+                                </rules>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>enforce-unique-dependency-declarations</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <phase>validate</phase>
+                            <configuration>
+                                <rules>
+                                    <banDuplicatePomDependencyVersions />
+                                </rules>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>enforce-transitive-dependency-versions</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <phase>validate</phase>
+                            <configuration>
+                                <rules>
+                                    <requireUpperBoundDeps />
+                                </rules>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <!--
+                            ~ validate dependencies are declared in the correct scope,
+                            ~ and that versions are declared in the correct locations.
+                            -->
+                            <id>enforce-pedantic-pom</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <phase>validate</phase>
+                            <configuration>
+                                <rules>
+                                    <!--
+                                    ~ see the following for documentation about configuration of the enforcer
+                                    ~ https://github.com/ferstl/pedantic-pom-enforcers/wiki/CompoundPedanticEnforcer
+                                    -->
+                                    <compound implementation="com.github.ferstl.maven.pomenforcers.CompoundPedanticEnforcer">
+                                        <!-- Enforcers -->
+                                        <enforcers>DEPENDENCY_CONFIGURATION,DEPENDENCY_SCOPE,DEPENDENCY_MANAGEMENT_LOCATION,PLUGIN_CONFIGURATION,PLUGIN_MANAGEMENT_LOCATION</enforcers>
+
+                                        <!-- DEPENDENCY_CONFIGURATION configuration -->
+                                        <manageDependencyVersions>true</manageDependencyVersions>
+                                        <allowUnmangedProjectVersions>false</allowUnmangedProjectVersions>
+                                        <manageDependencyExclusions>true</manageDependencyExclusions>
+
+                                        <!-- DEPENDENCY_SCOPE configuration -->
+                                        <compileDependencies>${pedantic.dependencies.compile}</compileDependencies>
+                                        <providedDependencies>${pedantic.dependencies.provided}</providedDependencies>
+                                        <runtimeDependencies>${pedantic.dependencies.runtime}</runtimeDependencies>
+                                        <systemDependencies>${pedantic.dependencies.system}</systemDependencies>
+                                        <testDependencies>${pedantic.dependencies.test}</testDependencies>
+                                        <importDependencies>${pedantic.dependencies.import}</importDependencies>
+
+                                        <!-- DEPENDENCY_MANAGEMENT_LOCATION configuration -->
+                                        <allowParentPomsForDependencyManagement>true</allowParentPomsForDependencyManagement>
+                                        <dependencyManagingPoms />
+
+                                        <!-- PLUGIN_CONFIGURATION configuration -->
+                                        <managePluginVersions>true</managePluginVersions>
+                                        <managePluginConfigurations>false</managePluginConfigurations>
+                                        <managePluginDependencies>false</managePluginDependencies>
+
+                                        <!-- PLUGIN_MANAGEMENT_LOCATION configuration -->
+                                        <allowParentPomsForPluginManagement>true</allowParentPomsForPluginManagement>
+                                        <pluginManagingPoms />
+                                    </compound>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-plugin.surefire.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-plugin.gpg.version}</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                            <phase>verify</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${maven-plugin.install.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven-plugin.jar.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-plugin.javadoc.version}</version>
+                    <configuration>
+                        <quiet>${javadoc.quiet}</quiet>
+                        <doclint>none</doclint>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>attach-javadoc</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                            <phase>package</phase>
+                            <configuration>
+                                <failOnError>${javadoc.failOnError}</failOnError>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <version>${maven-plugin.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>${maven-plugin.project-info-reports.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${maven-plugin.release.version}</version>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <useReleaseProfile>false</useReleaseProfile>
+                        <releaseProfiles>${release.profiles}</releaseProfiles>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-plugin.resources.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-publish-plugin</artifactId>
+                    <version>${maven-plugin.scm-publish.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${maven-plugin.shade.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${maven-plugin.site.version}</version>
+                    <executions>
+                        <execution>
+                            <!--
+                            ~ disable the default deploy goal, since no Gryphon Zone projects use it
+                            ~ (and any site deploys are likely to require a custom deploy execution)
+                            -->
+                            <id>default-deploy</id>
+                            <phase>none</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-plugin.source.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-compile-sources</id>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>attach-test-sources</id>
+                            <goals>
+                                <goal>test-jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-plugin.surefire.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-report-plugin</artifactId>
+                    <version>${maven-plugin.surefire.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${maven-plugin.build-helper.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${maven-plugin.exec.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>${maven-plugin.versions.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${maven-plugin.jacoco.version}</version>
+                    <executions>
+                        <execution>
+                            <id>jacoco-prepare</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                            <phase>initialize</phase>
+                            <configuration>
+                                <skip>${jacoco.skip}</skip>
+                                <output>file</output>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>jacoco-report</id>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                            <phase>prepare-package</phase>
+                            <configuration>
+                                <skip>${jacoco.skip}</skip>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${maven-plugin.nexus-staging.version}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <serverId>ossrh</serverId>
+                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>com.github.ekryd.sortpom</groupId>
+                <artifactId>sortpom-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sort-pom</id>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>analyze-dependencies</id>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-minimum-maven-version</id>
+                    </execution>
+                    <execution>
+                        <id>enforce-minimum-jdk-version</id>
+                    </execution>
+                    <execution>
+                        <id>enforce-unique-dependency-declarations</id>
+                    </execution>
+                    <execution>
+                        <id>enforce-transitive-dependency-versions</id>
+                    </execution>
+                    <execution>
+                        <id>enforce-pedantic-pom</id>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadoc</id>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>jacoco-prepare</id>
+                    </execution>
+                    <execution>
+                        <id>jacoco-report</id>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>ci-management</report>
+                            <report>dependencies</report>
+                            <report>dependency-info</report>
+                            <report>dependency-management</report>
+                            <report>index</report>
+                            <report>issue-management</report>
+                            <report>licenses</report>
+                            <report>mailing-lists</report>
+                            <report>modules</report>
+                            <report>plugin-management</report>
+                            <report>plugins</report>
+                            <report>scm</report>
+                            <report>summary</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <properties>
+                <sortpom.skip>true</sortpom.skip>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <!-- skip signing artifacts except when releasing -->
+                                <id>sign-artifacts</id>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>gh-pages</id>
+            <activation>
+                <file>
+                    <exists>${basedir}/src/site/.gh-pages</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-scm-publish-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>publish-site-to-scm</id>
+                                <goals>
+                                    <goal>publish-scm</goal>
+                                </goals>
+                                <phase>site-deploy</phase>
+                                <configuration>
+                                    <scmBranch>${scmpublish.scm.branch}</scmBranch>
+                                    <checkinComment>${scmpublish.checkinComment}</checkinComment>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>site</id>
+            <activation>
+                <file>
+                    <exists>${basedir}/src/site/site.xml</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-site-descriptor</id>
+                                <goals>
+                                    <goal>attach-descriptor</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                            <execution>
+                                <!-- disable default-site and replace with our custom execution -->
+                                <id>default-site</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>build-site</id>
+                                <goals>
+                                    <goal>site</goal>
+                                    <goal>stage</goal>
+                                </goals>
+                                <phase>site</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>display-updates</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>versions-maven-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>zone.gryphon.maven</groupId>
+                                <artifactId>maven-version-comparison-rules</artifactId>
+                                <version>1.0.8-23c82c2</version>
+                                <scope>compile</scope>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>plugin-updates</id>
+                                <goals>
+                                    <goal>display-plugin-updates</goal>
+                                </goals>
+                                <phase>initialize</phase>
+                                <configuration>
+                                    <allowSnapshots>false</allowSnapshots>
+                                    <generateBackupPoms>false</generateBackupPoms>
+                                    <rulesUri>${displayUpdates.rulesUri}</rulesUri>
+                                </configuration>
+                            </execution>
+                            <!-- When "allowAnyUpdates" is set to "false," "display-dependency-updates" only looks   -->
+                            <!-- for updates which match the first of "allowMajorUpdates", "allowMinorUpdates",      -->
+                            <!-- "allowIncrementalUpdates" which is set to true, e.g. if "allowMinorUpdates" is set  -->
+                            <!-- to "true," then the execution won't display any dependencies which have only an     -->
+                            <!-- incremental update. Thus, in order to get all updates, we need to define a separate -->
+                            <!-- execution for each of major/minor/incremental updates if we want to see all updates -->
+                            <execution>
+                                <id>incremental-dependency-updates</id>
+                                <goals>
+                                    <goal>display-dependency-updates</goal>
+                                </goals>
+                                <phase>initialize</phase>
+                                <configuration>
+                                    <allowAnyUpdates>false</allowAnyUpdates>
+                                    <allowMajorUpdates>false</allowMajorUpdates>
+                                    <allowMinorUpdates>false</allowMinorUpdates>
+                                    <allowIncrementalUpdates>true</allowIncrementalUpdates>
+                                    <allowSnapshots>false</allowSnapshots>
+                                    <generateBackupPoms>false</generateBackupPoms>
+                                    <processDependencies>${displayUpdates.processDependencies}</processDependencies>
+                                    <processDependencyManagement>${displayUpdates.processDependencyManagement}</processDependencyManagement>
+                                    <processPluginDependencies>${displayUpdates.processPluginDependencies}</processPluginDependencies>
+                                    <processPluginDependenciesInPluginManagement>${displayUpdates.processPluginDependenciesInPluginManagement}</processPluginDependenciesInPluginManagement>
+                                    <rulesUri>${displayUpdates.rulesUri}</rulesUri>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>minor-dependency-updates</id>
+                                <goals>
+                                    <goal>display-dependency-updates</goal>
+                                </goals>
+                                <phase>initialize</phase>
+                                <configuration>
+                                    <allowAnyUpdates>false</allowAnyUpdates>
+                                    <allowMajorUpdates>false</allowMajorUpdates>
+                                    <allowMinorUpdates>true</allowMinorUpdates>
+                                    <allowIncrementalUpdates>false</allowIncrementalUpdates>
+                                    <allowSnapshots>false</allowSnapshots>
+                                    <generateBackupPoms>false</generateBackupPoms>
+                                    <processDependencies>${displayUpdates.processDependencies}</processDependencies>
+                                    <processDependencyManagement>${displayUpdates.processDependencyManagement}</processDependencyManagement>
+                                    <processPluginDependencies>${displayUpdates.processPluginDependencies}</processPluginDependencies>
+                                    <processPluginDependenciesInPluginManagement>${displayUpdates.processPluginDependenciesInPluginManagement}</processPluginDependenciesInPluginManagement>
+                                    <rulesUri>${displayUpdates.rulesUri}</rulesUri>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>major-dependency-updates</id>
+                                <goals>
+                                    <goal>display-dependency-updates</goal>
+                                </goals>
+                                <phase>initialize</phase>
+                                <configuration>
+                                    <allowAnyUpdates>false</allowAnyUpdates>
+                                    <allowMajorUpdates>true</allowMajorUpdates>
+                                    <allowMinorUpdates>false</allowMinorUpdates>
+                                    <allowIncrementalUpdates>false</allowIncrementalUpdates>
+                                    <allowSnapshots>false</allowSnapshots>
+                                    <generateBackupPoms>false</generateBackupPoms>
+                                    <processDependencies>${displayUpdates.processDependencies}</processDependencies>
+                                    <processDependencyManagement>${displayUpdates.processDependencyManagement}</processDependencyManagement>
+                                    <processPluginDependencies>${displayUpdates.processPluginDependencies}</processPluginDependencies>
+                                    <processPluginDependenciesInPluginManagement>${displayUpdates.processPluginDependenciesInPluginManagement}</processPluginDependenciesInPluginManagement>
+                                    <rulesUri>${displayUpdates.rulesUri}</rulesUri>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

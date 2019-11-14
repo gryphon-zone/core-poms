@@ -21,7 +21,6 @@
         <groupId>zone.gryphon</groupId>
         <artifactId>base-pom</artifactId>
         <version>0.20-SNAPSHOT</version>
-        <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>base-bom</artifactId>
@@ -29,6 +28,14 @@
 
     <name>${project.artifactId}</name>
     <description>Base POM for managing dependencies in Gryphon Zone projects</description>
+
+    <distributionManagement>
+        <site>
+            <id>gh-pages</id>
+            <!-- this setting doesn't seem to support interpolation, so it must be hardcoded -->
+            <url>scm:git:git@github.com:gryphon-zone/core-poms.git/base-bom/</url>
+        </site>
+    </distributionManagement>
 
     <properties>
         <displayUpdates.processDependencyManagement>true</displayUpdates.processDependencyManagement>
@@ -124,4 +131,16 @@
 
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <topSiteURL>${project.parent.scm.developerConnection}</topSiteURL>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

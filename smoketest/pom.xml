@@ -21,7 +21,6 @@
         <groupId>zone.gryphon</groupId>
         <artifactId>base-pom</artifactId>
         <version>0.20-SNAPSHOT</version>
-        <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
     <groupId>zone.gryphon.ignore</groupId>
@@ -36,6 +35,14 @@
 
         The purpose of this module is to provide a minimal example of a jar maven project which exercises various
         pieces of maven functionality, to ensure that no easily detectable issues slip through.</description>
+
+    <distributionManagement>
+        <site>
+            <id>gh-pages</id>
+            <!-- this setting doesn't seem to support interpolation, so it must be hardcoded -->
+            <url>scm:git:git@github.com:gryphon-zone/core-poms.git/smoketest/</url>
+        </site>
+    </distributionManagement>
 
     <properties>
 
@@ -146,6 +153,13 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <topSiteURL>${project.parent.scm.developerConnection}</topSiteURL>
+                </configuration>
             </plugin>
         </plugins>
     </build>
