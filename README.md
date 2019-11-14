@@ -7,8 +7,8 @@
 [build_badge]: https://jenkins.gryphon.zone/buildStatus/icon?job=gryphon-zone%2Fcore-poms%2Fmaster
 [build_link]: https://jenkins.gryphon.zone/job/gryphon-zone/job/core-poms/job/master/
 
-[central_badge]: https://img.shields.io/maven-central/v/zone.gryphon/core-poms?color=blue
-[central_link]: https://search.maven.org/search?q=g:%22zone.gryphon%22%20AND%20a:%22core-poms%22
+[central_badge]: https://img.shields.io/maven-central/v/zone.gryphon/base-pom?color=blue
+[central_link]: https://search.maven.org/search?q=g:%22zone.gryphon%22%20AND%20a:%22base-pom%22
 
 [license_badge]: https://img.shields.io/github/license/gryphon-zone/core-poms
 [license_url]: http://www.apache.org/licenses/LICENSE-2.0
@@ -19,13 +19,13 @@ Currently includes two POMs meant to be consumed by other projects:
 * [base-pom](https://search.maven.org/search?q=g:zone.gryphon%20AND%20a:base-pom&core=gav)
     * Parent POM for all Gryphon Zone projects
 * [base-bom](https://search.maven.org/search?q=g:zone.gryphon%20AND%20a:base-bom&core=gav)
-    * Dependency management for common project dependencies
+    * Managed versions of commonly used dependencies
 
 # Usage
 
 ### base-pom
 
-`base-pom` is meant to be a parent POM:
+`base-pom` is intended to be used as a parent POM, like so:
 ```xml
 <parent>
     <groupId>zone.gryphon</groupId>
@@ -36,7 +36,8 @@ Currently includes two POMs meant to be consumed by other projects:
 See the link above for available versions.
 
 ### base-bom
-`base-bom` is meant to be included as a `pom`, in the `import` scope:
+`base-bom` should be included in the `dependencyManagement` section of the POM with the `import` scope,
+so that it will manage versions of project dependencies:
 ```xml
 <dependencyManagement>
     <dependencies>
@@ -50,9 +51,8 @@ See the link above for available versions.
     </dependencies>
 </dependencyManagement>
 ```
-Note that `base-bom.version` is defined in `base-pom`, so as long as `base-pom` is an ancestor of your current POM,
-you do **not** need to redefine `base-bom.version` in your POM
-(and it will be automatically upgraded when you upgrade your `base-pom` version).
+Note that the property `base-bom.version` is defined in `base-pom`,
+so you do **not** need to define `base-bom.version` in your POM.
 
 ## Notes on behavior
 
@@ -62,30 +62,39 @@ For POM cleanliness, the [sortpom-maven-plugin](https://github.com/Ekryd/sortpom
 
 To exclude a section of the POM from being sorted, use the tags `<?SORTPOM IGNORE?>` and `<?SORTPOM RESUME?>`.
 
-To disable POM sorting entirely, you can either set the `sortpom.skip` property to `true`,
-or re-bind the `sortpom` execution `sort-pom` to the Maven execution phase `none`:
+To disable POM sorting entirely, you can either set the property `sortpom.skip` to `true`,
+or re-bind the `sortpom` plugin execution `sort-pom` to the execution phase `none`:
 ```xml
 <build>
-    <plugins>
-        <plugin>
-            <groupId>com.github.ekryd.sortpom</groupId>
-            <artifactId>sortpom-maven-plugin</artifactId>
-            <executions>
-                <execution>
-                    <id>sort-pom</id>
-                    <phase>none</phase>
-                </execution>
-            </executions>
-        </plugin>
-    </plugins>
+  <plugins>
+    <plugin>
+      <groupId>com.github.ekryd.sortpom</groupId>
+      <artifactId>sortpom-maven-plugin</artifactId>
+      <executions>
+        <execution>
+          <id>sort-pom</id>
+          <phase>none</phase>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
 </build>
 ```
 
 ### Github Pages
-To enable automatic creation of a [github-pages](https://pages.github.com/) site,
-create the file named `src/site/.gh-pages` in the root module (the file can be empty).
+To enable automatic publishing of a [github-pages](https://pages.github.com/) site during the execution phase `site-deploy`,
+you can add one of two files depending on whether the module is the root module of the project, of a child module:
+* **root module** - `src/site/.gh-pages`
+* **child module** - `smoketest/src/site/.gh-pages-child-module`
 
-Note that the initial creation of the `gh-pages` git branch requires manual steps:
+Note that technically this only needs to be done for the last module to build in a project;
+the downside to doing it for all modules is unnecessary commits to the `gh-pages` branch.
+
+_note: this is necessary because the `maven-scm-publish-plugin` is intended to be run as a aggregator plugin,_
+_and Maven lacks support for properly running Aggregator plugins which are defined in the POM,_
+_a problem which [has been present for over ten years without a solution.](https://cwiki.apache.org/confluence/display/MAVENOLD/Aggregator+Plugins)_
+
+The initial creation of the `gh-pages` git branch requires manual setup:
 ```shell script
 git checkout --orphan gh-pages
 rm .git/index
