@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Objects;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ResourceTest {
@@ -36,7 +37,7 @@ public class ResourceTest {
     }
 
     private String loadResourceNamed(String resource) {
-        try (BufferedReader stream = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResourceAsStream(resource))))) {
+        try (BufferedReader stream = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResourceAsStream(resource)), UTF_8))) {
             StringBuilder builder = new StringBuilder();
             String line;
 

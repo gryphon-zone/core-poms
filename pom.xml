@@ -118,6 +118,8 @@
         <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 
+        <error-prone.excluded-paths>none</error-prone.excluded-paths>
+
         <!-- dependency analyzer settings -->
         <dependency.fail.on.warnings>true</dependency.fail.on.warnings>
 
@@ -175,6 +177,10 @@
         <pedantic.dependencies.import>${pedantic.dependencies.import.default}</pedantic.dependencies.import>
 
         <jacoco.skip>false</jacoco.skip>
+
+        <!-- dependency versions, which can't be put in the BOM because they're used in this POM -->
+        <lombok.version>1.18.8</lombok.version>
+        <error-prone.version>2.3.4</error-prone.version>
 
         <!-- plugin versions -->
         <maven-plugin.build-helper.version>3.0.0</maven-plugin.build-helper.version>
@@ -336,6 +342,25 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-plugin.compiler.version}</version>
+                    <configuration>
+                        <compilerArgs>
+                            <arg>-parameters</arg>
+                            <arg>-XDcompilePolicy=simple</arg>
+                            <arg>-Xplugin:ErrorProne -Xep:UnusedVariable:OFF -XepDisableWarningsInGeneratedCode -XepExcludedPaths:${error-prone.excluded-paths}</arg>
+                        </compilerArgs>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>com.google.errorprone</groupId>
+                                <artifactId>error_prone_core</artifactId>
+                                <version>${error-prone.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
