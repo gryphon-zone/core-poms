@@ -26,9 +26,4 @@ public class SimplePojo {
     @NonNull
     private final String id;
 
-    public void unused() {
-        int a = 1; int b = 2;
-        String foo = "\u0009";
-    }
-
 }
