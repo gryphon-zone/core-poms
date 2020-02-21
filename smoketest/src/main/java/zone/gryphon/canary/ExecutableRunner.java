@@ -22,6 +22,12 @@ import java.util.UUID;
 @Slf4j
 public class ExecutableRunner {
 
+    /**
+     * Invoke the given executable and return the result.
+     *
+     * @param executable The executable to invoke
+     * @return The result of the operation
+     */
     public static Object invoke(Executable executable) {
         SimplePojo pojo = SimplePojo.builder()
                 .id(UUID.randomUUID().toString())
