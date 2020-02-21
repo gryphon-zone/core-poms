@@ -118,6 +118,11 @@
         <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 
+        <!-- dependency versions, which can't be put in the BOM because they're used in this POM -->
+        <lombok.version>1.18.12</lombok.version>
+        <error-prone.version>2.3.4</error-prone.version>
+        <gryphon-zone.maven-components.version>1.0.18-c6e4880</gryphon-zone.maven-components.version>
+
         <error-prone.excluded-paths>none</error-prone.excluded-paths>
 
         <!-- dependency analyzer settings -->
@@ -151,6 +156,19 @@
         <displayUpdates.processPluginDependencies>true</displayUpdates.processPluginDependencies>
         <displayUpdates.processDependencies>true</displayUpdates.processDependencies>
         <displayUpdates.rulesUri>classpath:///zone/gryphon/maven/maven-version-comparison-rules.xml</displayUpdates.rulesUri>
+        <displayUpdates.comparison-rules.version>${gryphon-zone.maven-components.version}</displayUpdates.comparison-rules.version>
+
+        <checkstyle.includeResources>true</checkstyle.includeResources>
+        <checkstyle.includeTestResources>true</checkstyle.includeTestResources>
+        <checkstyle.includes>**\/*.java</checkstyle.includes>
+        <checkstyle.resourceIncludes>**\/*.properties</checkstyle.resourceIncludes>
+        <checkstyle.config.location>google_checks.xml</checkstyle.config.location>
+        <checkstyle.excludes />
+        <checkstyle.failOnViolation>true</checkstyle.failOnViolation>
+        <checkstyle.skip>false</checkstyle.skip>
+        <checkstyle.gryphon-zone.version>${gryphon-zone.maven-components.version}</checkstyle.gryphon-zone.version>
+
+        <checkstyle.suppressions.location>/zone/gryphon/checkstyle/google-checkstyle-suppression.xml</checkstyle.suppressions.location>
 
         <!-- pedantic POM settings -->
         <pedantic-pom-enforcers.version>1.3.2</pedantic-pom-enforcers.version>
@@ -178,12 +196,9 @@
 
         <jacoco.skip>false</jacoco.skip>
 
-        <!-- dependency versions, which can't be put in the BOM because they're used in this POM -->
-        <lombok.version>1.18.12</lombok.version>
-        <error-prone.version>2.3.4</error-prone.version>
-
         <!-- plugin versions -->
         <maven-plugin.build-helper.version>3.0.0</maven-plugin.build-helper.version>
+        <maven-plugin.checkstyle.version>3.1.1</maven-plugin.checkstyle.version>
         <maven-plugin.clean.version>3.1.0</maven-plugin.clean.version>
         <maven-plugin.compiler.version>3.8.1</maven-plugin.compiler.version>
         <maven-plugin.dependency.version>3.1.1</maven-plugin.dependency.version>
@@ -329,6 +344,37 @@
                                 <nrOfIndentSpace>4</nrOfIndentSpace>
                                 <predefinedSortOrder>${sortpom.profile}</predefinedSortOrder>
                                 <skip>${sortpom.skip}</skip>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven-plugin.checkstyle.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>zone.gryphon.maven</groupId>
+                            <artifactId>maven-components-checkstyle</artifactId>
+                            <version>${checkstyle.gryphon-zone.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <executions>
+                        <execution>
+                            <id>checkstyle</id>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                            <phase>process-test-classes</phase>
+                            <configuration>
+                                <includeResources>${checkstyle.includeResources}</includeResources>
+                                <includeTestResources>${checkstyle.includeTestResources}</includeTestResources>
+                                <includes>${checkstyle.includes}</includes>
+                                <resourceIncludes>${checkstyle.resourceIncludes}</resourceIncludes>
+                                <configLocation>${checkstyle.config.location}</configLocation>
+                                <excludes>${checkstyle.excludes}</excludes>
+
+                                <logViolationsToConsole>true</logViolationsToConsole>
                             </configuration>
                         </execution>
                     </executions>
@@ -699,6 +745,15 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>checkstyle</id>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
@@ -960,8 +1015,8 @@
                         <dependencies>
                             <dependency>
                                 <groupId>zone.gryphon.maven</groupId>
-                                <artifactId>maven-version-comparison-rules</artifactId>
-                                <version>1.0.8-23c82c2</version>
+                                <artifactId>maven-components-version-comparison</artifactId>
+                                <version>${displayUpdates.comparison-rules.version}</version>
                                 <scope>compile</scope>
                             </dependency>
                         </dependencies>
