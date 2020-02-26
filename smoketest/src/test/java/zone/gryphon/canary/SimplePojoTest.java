@@ -16,29 +16,28 @@
 package zone.gryphon.canary;
 
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 import java.beans.ConstructorProperties;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import org.junit.Test;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class SimplePojoTest {
 
     private final SimplePojo foo = SimplePojo.builder()
-            .id("foo")
-            .build();
+        .id("foo")
+        .build();
 
     private final SimplePojo alsoFoo = SimplePojo.builder()
-            .id("foo")
-            .build();
+        .id("foo")
+        .build();
 
     private final SimplePojo bar = SimplePojo.builder()
-            .id("bar")
-            .build();
+        .id("bar")
+        .build();
 
     @Test
     public void testConstructor() throws Exception {

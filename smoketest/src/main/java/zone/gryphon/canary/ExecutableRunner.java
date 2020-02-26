@@ -15,17 +15,22 @@
 
 package zone.gryphon.canary;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ExecutableRunner {
 
+    /**
+     * Invoke the given executable and return the result.
+     *
+     * @param executable The executable to invoke
+     * @return The result of the operation
+     */
     public static Object invoke(Executable executable) {
         SimplePojo pojo = SimplePojo.builder()
-                .id(UUID.randomUUID().toString())
-                .build();
+            .id(UUID.randomUUID().toString())
+            .build();
 
         log.info("[slf4j] About to invoke method");
         return executable.execute(pojo);
