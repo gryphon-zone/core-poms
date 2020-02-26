@@ -118,12 +118,13 @@
         <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
         <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
 
+        <error-prone.excluded-paths>none</error-prone.excluded-paths>
+
         <!-- dependency versions, which can't be put in the BOM because they're used in this POM -->
         <lombok.version>1.18.12</lombok.version>
         <error-prone.version>2.3.4</error-prone.version>
-        <gryphon-zone.maven-components.version>1.0.18-c6e4880</gryphon-zone.maven-components.version>
-
-        <error-prone.excluded-paths>none</error-prone.excluded-paths>
+        <pedantic-pom-enforcers.version>1.3.2</pedantic-pom-enforcers.version>
+        <gryphon-zone.maven-components.version>1.0.19-30f180e</gryphon-zone.maven-components.version>
 
         <!-- dependency analyzer settings -->
         <dependency.fail.on.warnings>true</dependency.fail.on.warnings>
@@ -158,20 +159,21 @@
         <displayUpdates.rulesUri>classpath:///zone/gryphon/maven/maven-version-comparison-rules.xml</displayUpdates.rulesUri>
         <displayUpdates.comparison-rules.version>${gryphon-zone.maven-components.version}</displayUpdates.comparison-rules.version>
 
-        <checkstyle.includeResources>true</checkstyle.includeResources>
-        <checkstyle.includeTestResources>true</checkstyle.includeTestResources>
-        <checkstyle.includes>**\/*.java</checkstyle.includes>
-        <checkstyle.resourceIncludes>**\/*.properties</checkstyle.resourceIncludes>
         <checkstyle.config.location>google_checks.xml</checkstyle.config.location>
         <checkstyle.excludes />
         <checkstyle.failOnViolation>true</checkstyle.failOnViolation>
+        <checkstyle.includeResources>true</checkstyle.includeResources>
+        <checkstyle.includes>**\/*.java</checkstyle.includes>
+        <checkstyle.includeTestResources>true</checkstyle.includeTestResources>
+        <checkstyle.includeTestSourceDirectory>true</checkstyle.includeTestSourceDirectory>
+        <checkstyle.resourceIncludes>**\/*.properties</checkstyle.resourceIncludes>
         <checkstyle.skip>false</checkstyle.skip>
+        <checkstyle.suppressions.location>/zone/gryphon/checkstyle/google-checkstyle-suppression.xml</checkstyle.suppressions.location>
+        <checkstyle.violation.ignore />
+        <checkstyle.violationSeverity>warning</checkstyle.violationSeverity>
         <checkstyle.gryphon-zone.version>${gryphon-zone.maven-components.version}</checkstyle.gryphon-zone.version>
 
-        <checkstyle.suppressions.location>/zone/gryphon/checkstyle/google-checkstyle-suppression.xml</checkstyle.suppressions.location>
-
         <!-- pedantic POM settings -->
-        <pedantic-pom-enforcers.version>1.3.2</pedantic-pom-enforcers.version>
 
         <!--
         ~ define hardcoded values in "default" settings so that sub-poms can easily add to the list without starting from scratch
@@ -367,14 +369,22 @@
                             </goals>
                             <phase>process-test-classes</phase>
                             <configuration>
+
+                                <!-- required parameters -->
                                 <includeResources>${checkstyle.includeResources}</includeResources>
                                 <includeTestResources>${checkstyle.includeTestResources}</includeTestResources>
                                 <includes>${checkstyle.includes}</includes>
                                 <resourceIncludes>${checkstyle.resourceIncludes}</resourceIncludes>
+
+                                <!-- optional parameters -->
                                 <configLocation>${checkstyle.config.location}</configLocation>
                                 <excludes>${checkstyle.excludes}</excludes>
-
-                                <logViolationsToConsole>true</logViolationsToConsole>
+                                <failOnViolation>${checkstyle.failOnViolation}</failOnViolation>
+                                <includeTestSourceDirectory>${checkstyle.includeTestSourceDirectory}</includeTestSourceDirectory>
+                                <skip>${checkstyle.skip}</skip>
+                                <suppressionsLocation>${checkstyle.suppressions.location}</suppressionsLocation>
+                                <violationIgnore>${checkstyle.violation.ignore}</violationIgnore>
+                                <violationSeverity>${checkstyle.violationSeverity}</violationSeverity>
                             </configuration>
                         </execution>
                     </executions>

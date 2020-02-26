@@ -25,6 +25,9 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 public class LoggingProviderTest {
 
+    /**
+     * setup.
+     */
     @BeforeClass
     public static void setUp() {
         // note: this must be run only once for *all* JUnit tests in the project, not just the ones in this class
