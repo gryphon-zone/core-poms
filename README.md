@@ -13,19 +13,15 @@
 [license_badge]: https://img.shields.io/github/license/gryphon-zone/core-poms
 [license_url]: http://www.apache.org/licenses/LICENSE-2.0
 
-The set of core Maven POMs for Gryphon Zone projects.
-
-Currently includes two POMs meant to be consumed by other projects:
-* [base-pom](https://search.maven.org/search?q=g:zone.gryphon%20AND%20a:base-pom&core=gav)
-    * Parent POM for all Gryphon Zone projects
-* [base-bom](https://search.maven.org/search?q=g:zone.gryphon%20AND%20a:base-bom&core=gav)
-    * Managed versions of commonly used dependencies
+Fundamental [POMs](https://maven.apache.org/guides/introduction/introduction-to-the-pom.html) for Gryphon Zone projects:
+* [base-pom](https://search.maven.org/artifact/zone.gryphon/base-pom) - Parent POM for all Gryphon Zone projects
+* [base-bom](https://search.maven.org/artifact/zone.gryphon/base-bom) - Managed versions of commonly used dependencies
 
 # Usage
 
 ### base-pom
 
-`base-pom` is intended to be used as a parent POM, like so:
+`base-pom` is meant to be used as a parent POM:
 ```xml
 <parent>
     <groupId>zone.gryphon</groupId>
@@ -33,7 +29,6 @@ Currently includes two POMs meant to be consumed by other projects:
     <version>VERSION</version>
 </parent>
 ```
-See the link above for available versions.
 
 ### base-bom
 `base-bom` should be included in the `dependencyManagement` section of the POM with the `import` scope,
@@ -51,60 +46,141 @@ so that it will manage versions of project dependencies:
     </dependencies>
 </dependencyManagement>
 ```
-Note that the property `base-bom.version` is defined in `base-pom`,
-so you do **not** need to define `base-bom.version` in your POM.
+Note that the property `base-bom.version` is defined in `base-pom`, so it does **not** need to be redefined.
 
-## Notes on behavior
+# Behavior
 
-### sortpom-maven-plugin
+`base-pom` enables a number of default configurations based on Gryphon Zone best-practices.
+In the event the defaults are not acceptable for a child project, most of the executions can be configured via properties in the POM.
 
-For POM cleanliness, the [sortpom-maven-plugin](https://github.com/Ekryd/sortpom) is enabled by default.
+## Bytecode Version
+
+By default, Java 8 bytecode will be generated.
+
+This can be changed using the `java.version.minor` property, e.g. to generate Java 7 bytecode
+set it to `7`, for Java 8 set it to `8`, etc...
+
+## POM Hygiene
+
+### POM Hygiene - Style
+
+For POM hygiene, the [sortpom-maven-plugin](https://github.com/Ekryd/sortpom) is enabled by default.
 
 To exclude a section of the POM from being sorted, use the tags `<?SORTPOM IGNORE?>` and `<?SORTPOM RESUME?>`.
 
-To disable POM sorting entirely, you can either set the property `sortpom.skip` to `true`,
-or re-bind the `sortpom` plugin execution `sort-pom` to the execution phase `none`:
-```xml
-<build>
-  <plugins>
-    <plugin>
-      <groupId>com.github.ekryd.sortpom</groupId>
-      <artifactId>sortpom-maven-plugin</artifactId>
-      <executions>
-        <execution>
-          <id>sort-pom</id>
-          <phase>none</phase>
-        </execution>
-      </executions>
-    </plugin>
-  </plugins>
-</build>
-```
+To disable POM sorting entirely, set the property `sortpom.skip` to `true`.
 
-### Github Pages
-To enable automatic publishing of a [github-pages](https://pages.github.com/) site during the execution phase `site-deploy`,
-you can add one of two files depending on whether the module is the root module of the project, of a child module:
-* **root module** - `src/site/.gh-pages`
-* **child module** - `smoketest/src/site/.gh-pages-child-module`
+### POM Hygiene - Dependencies
 
-Note that technically this only needs to be done for the last module to build in a project;
-the downside to doing it for all modules is unnecessary commits to the `gh-pages` branch.
+The `analyze-only` goal of the
+[maven-dependency-plugin](https://maven.apache.org/plugins/maven-dependency-plugin/analyze-only-mojo.html)
+is used to detect dependency issues in the POM.
 
-_note: this is necessary because the `maven-scm-publish-plugin` is intended to be run as a aggregator plugin,_
-_and Maven lacks support for properly running Aggregator plugins which are defined in the POM,_
-_a problem which [has been present for over ten years without a solution.](https://cwiki.apache.org/confluence/display/MAVENOLD/Aggregator+Plugins)_
+In the case of false positives, use the
+[ignoredUnusedDeclaredDependencies](https://maven.apache.org/plugins/maven-dependency-plugin/analyze-only-mojo.html#ignoredUnusedDeclaredDependencies)
+configuration option to mark dependencies as used.
 
-The initial creation of the `gh-pages` git branch requires manual setup:
+To prevent detected issues from failing the build, set `dependency.fail.on.warnings` to `false`.
+
+## Code Hygiene
+
+### Code Hygiene - Style
+
+Gryphon Zone projects follow the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html),
+with the following changes:
+* Indentation is done with `4` spaces, not `2`
+* Line length/column limit is not limited to 100 characters
+  * Although not restricted, use best judgement as to when lines should wrap
+
+This standard is enforced with the [maven-checkstyle-plugin](https://maven.apache.org/plugins/maven-checkstyle-plugin/).
+
+To temporarily prevent checkstyle failures from failing the build, set the property `checkstyle.failOnViolation` to `false`.
+
+### Code Hygiene - Bugs
+
+[Error Prone](https://errorprone.info/) is enabled by default during compilation.
+
+### Code Hygiene - Test Coverage
+
+[JaCoCo](https://www.eclemma.org/jacoco/) is enabled by default for code coverage.
+
+
+## Github Pages
+Autogenerated documentation can be published to the project's [github-pages](https://pages.github.com/) site during the `site-deploy` execution phase.
+
+#### Step 1 - create `gh-pages` branch
+
+The `gh-pages` branch must be created manually:
+
 ```shell script
 git checkout --orphan gh-pages
 rm .git/index
 git clean -fdx
 touch .gitkeep
-git add .
+git add .gitkeep
 git commit -m 'Create gh-pages branch'
 git push --set-upstream origin gh-pages
 ```
 
-See the tutorials on the 
-[maven-scm-publish-plugin](https://maven.apache.org/plugins/maven-scm-publish-plugin/various-tips.html)
-for details.
+_For details on this step, refer to the [maven-scm-publish-plugin](https://maven.apache.org/plugins/maven-scm-publish-plugin/various-tips.html)_
+
+#### Step 2 - enable site generation
+
+Enable generation of the Maven site by adding a `src/site/site.xml` file.
+
+A minimal version of this file is:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/DECORATION/1.8.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.8.0 http://maven.apache.org/xsd/decoration-1.8.0.xsd" name="${project.artifactId}">
+
+</project>
+```
+
+#### Step 3 - enable site publication
+
+Depending on whether the module is the root module or a child module, add one of the following files:
+* _root_ - `src/site/.gh-pages`
+* _child_ - `src/site/.gh-pages-child-module`
+
+e.g:
+```
+project-root
+├── pom.xml
+├── src
+│   └── site
+│       ├── site.xml
+│       └── .gh-pages
+│
+├── child-module-one
+│   ├── pom.xml
+│   └── src
+│       └── site
+│           ├── site.xml
+│           └── .gh-pages-child-module
+│
+└── child-module-two
+    ├── pom.xml
+    └── src
+        └── site
+            ├── site.xml
+            └── .gh-pages-child-module
+```
+
+_note: this step is necessary because the `maven-scm-publish-plugin` is intended to be run as a aggregator plugin,_
+_and Maven lacks support for properly running Aggregator plugins which are defined in the POM,_
+_a problem which [has been present for over ten years without a solution.](https://cwiki.apache.org/confluence/display/MAVENOLD/Aggregator+Plugins)_
+
+Note that currently grandchild modules are unsupported, e.g:
+```
+project-root
+├── pom.xml
+|
+└── child-module
+    ├── pom.xml
+    │
+    └── grandchild-module
+        ├── pom.xml
+        └── src
+            └── site
+                └── site.xml
+```
